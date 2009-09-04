@@ -200,6 +200,7 @@ class config:
     coordInversionHack = True 
     # try to get around the artifacts when drawing filled polygons in smooth mode
     smoothFixHack = True 
+    smoothTurnedOn = False # tells whether smooth was on before the hack
     
 class callback:
     """Call back functions."""
@@ -221,7 +222,7 @@ class callback:
 
 def hsb_to_rgb (h,s,v,a):
     """Simple hsv to rgb conversion. Assumes components specified in range 0.0-1.0."""
-    tmp = color[0]*5.9999
+    tmp = h*5.9999
     hi = int (tmp)
     f = tmp-hi
     p = v * (1-s)
@@ -328,7 +329,9 @@ def colorMode(mode,*args):
     """Sets the color system used for specifying colors and the 
     component ranges"""
     attrib.colorMode = mode
-    if len(args)==1:
+    if len(args)==0:
+        pass
+    elif len(args)==1:
         attrib.colorRange = args*4
     elif len(args)==3:
         attrib.colorRange = (args[0],args[1],args[2],attrib.colorRange[3])
@@ -374,7 +377,8 @@ def smooth():
 def noSmooth():
     """Sets state so that lines are rendered quickly."""
     attrib.smooth = False
-    glDisable(GL_BLEND)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glDisable(GL_LINE_SMOOTH)
     glDisable(GL_POINT_SMOOTH)
     glDisable(GL_POLYGON_SMOOTH)
@@ -535,6 +539,17 @@ def ambient(*args):
 #  PRIMITIVE DRAWING
 #************************
 
+def _smoothFixHackBegin():
+    """Try to cope with OpenGL's faulty antialiasing of polygons by turning
+    off smooth rendering temporarily."""
+    if config.smoothFixHack:
+        config.smoothTurnedOn = attrib.smooth
+        if config.smoothTurnedOn: noSmooth()
+
+def _smoothFixHackEnd():
+    """Restore the smooth setting if it was temporarily turned off."""
+    if config.smoothFixHack and config.smoothTurnedOn: smooth()
+    
 def background(*color):
     """Clears the screen with color. 
     Color may be an (r,g,b) tuple or a single gray value. If depth testing is
@@ -566,7 +581,9 @@ def ellipse(x,y,width,height):
     glTranslatef(0.5,0.5,0)
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
+        _smoothFixHackBegin()
         gluDisk(shape.quadric,0,0.5,360,1)
+        _smoothFixHackEnd()
     glPushAttrib(GL_POLYGON_BIT)
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     glLineWidth (attrib.strokeWeight)
@@ -603,7 +620,9 @@ def arc(x,y,width,height, start, stop):
     npts = min(5,sweep)
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
+        _smoothFixHackBegin()
         gluPartialDisk(shape.quadric,0,0.5,npts,1,start,sweep)
+        _smoothFixHackEnd()
     glPushAttrib(GL_POLYGON_BIT)
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     glLineWidth (attrib.strokeWeight)
@@ -628,12 +647,14 @@ def rect(x,y,width,height):
         height = height-y
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
+        _smoothFixHackBegin()
         glBegin(GL_POLYGON)
         glVertex2f(x,y)
         glVertex2f(x+width,y)
         glVertex2f(x+width,y+height)
         glVertex2f(x,y+height)
         glEnd()
+        _smoothFixHackEnd()
     if attrib.strokeColor != None:
         glLineWidth (attrib.strokeWeight)
         glColor4f(*attrib.strokeColor)
@@ -648,12 +669,14 @@ def quad(x0,y0,x1,y1,x2,y2,x3,y3):
     """Draws a 2D quadrilateral with the given coordinates"""
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
+        _smoothFixHackBegin()
         glBegin(GL_POLYGON)
         glVertex2f(x0,y0)
         glVertex2f(x1,y1)
         glVertex2f(x2,y2)
         glVertex2f(x3,y3)
         glEnd()
+        _smoothFixHackBegin()
     if attrib.strokeColor != None:
         glLineWidth (attrib.strokeWeight)
         glColor4f(*attrib.strokeColor)
@@ -737,25 +760,14 @@ def box(*args):
         glEnable(GL_POLYGON_OFFSET_FILL)
         glPolygonOffset(1,1)
         glColor4f(*attrib.fillColor)
-        if config.smoothFixHack: 
-            # Many implementations of Opengl render antialiased polygons
-            # incorrectly, thus, we fix it by turning it off temporarily
-            issmooth = attrib.smooth
-            if issmooth: noSmooth()
-            glBegin(GL_QUADS)
-            for f,n in zip(faces,normals):
-                glNormal3f(*n)
-                for i in f:
-                    glVertex3f(*v[i])
-            glEnd()
-            if issmooth: smooth()
-        else:
-            glBegin(GL_QUADS)
-            for f,n in zip(faces,normals):
-                glNormal3f(*n)
-                for i in f:
-                    glVertex3f(*v[i])
-            glEnd()
+        _smoothFixHackBegin()
+        glBegin(GL_QUADS)
+        for f,n in zip(faces,normals):
+            glNormal3f(*n)
+            for i in f:
+                glVertex3f(*v[i])
+        glEnd()
+        _smoothFixHackEnd()
         glDisable(GL_POLYGON_OFFSET_FILL)
     if attrib.strokeColor!=None:
         glLineWidth (attrib.strokeWeight)
@@ -774,15 +786,9 @@ def sphere(radius):
         glEnable(GL_POLYGON_OFFSET_FILL)
         glPolygonOffset(1,1)
         glColor4f(*attrib.fillColor)
-        if config.smoothFixHack:
-            # Many implementations of Opengl render antialiased polygons
-            # incorrectly, thus, we fix it by turning it off temporarily
-            issmooth = attrib.smooth
-            if issmooth: noSmooth()
-            gluSphere(shape.quadric, radius, shape.sphereDetail[0], shape.sphereDetail[1])
-            if issmooth: smooth()
-        else:
-            gluSphere(shape.quadric, radius, shape.sphereDetail[0], shape.sphereDetail[1])
+        _smoothFixHackBegin()
+        gluSphere(shape.quadric, radius, shape.sphereDetail[0], shape.sphereDetail[1])
+        _smoothFixHackEnd()
         glDisable(GL_POLYGON_OFFSET_FILL)
     if attrib.strokeColor!=None:
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
@@ -849,11 +855,7 @@ def endShape(close=False):
         glNormal3f(*normal)
         # Draw filled shape
         if shape.type==None:
-            issmooth = attrib.smooth
-            # Many implementations of Opengl render antialiased polygons
-            # incorrectly, thus, we fix it by turning it off temporarily
-            if config.smoothFixHack: 
-                if issmooth: glDisable(GL_POLYGON_SMOOTH)
+            _smoothFixHackBegin()
             gluTessCallback(shape.tess, GLU_TESS_VERTEX, ctypes.cast(glVertex3dv,ctypes.CFUNCTYPE(None)))
             gluTessCallback(shape.tess, GLU_TESS_BEGIN, ctypes.cast(glBegin,ctypes.CFUNCTYPE(None)))
             gluTessCallback(shape.tess, GLU_TESS_END, ctypes.cast(glEnd,ctypes.CFUNCTYPE(None)))
@@ -879,8 +881,7 @@ def endShape(close=False):
                     gluTessVertex(shape.tess, a[-1], a[-1])
             gluTessEndContour (shape.tess)
             gluTessEndPolygon (shape.tess)
-            if config.smoothFixHack:
-                if issmooth: glEnable(GL_POLYGON_SMOOTH)
+            _smoothFixHackEnd()
         else:
             if shape.nrm != []:
                 # User supplied normals
@@ -1400,7 +1401,7 @@ def size(nx=screen.width,ny=screen.height,fullscreen=False,resizable=False,capti
     if fullscreen: nx,ny = None,None
     try:
         # Try and create a window with double buffer
-        screen.config = Config(depth_size=24, double_buffer=True,)
+        screen.config = Config(depth_size=24, alpha_size=8, double_buffer=True,)
         screen.window = pyglet.window.Window(nx, ny, resizable=resizable, fullscreen=fullscreen,
                         config=screen.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException:
