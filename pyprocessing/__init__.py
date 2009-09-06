@@ -243,7 +243,7 @@ def hsb_to_rgb (h,s,v,a):
     return r,g,b,a
 
 def rgb_to_hsb(r,g,b,a): 
-    """Simple hsv to rgb conversion. Assumes components specified in range 0.0-1.0."""
+    """Simple rgb to hsb conversion. Assumes components specified in range 0.0-1.0."""
     maxval = max(r,g,b)
     minval = min(r,g,b)
     if maxval==minval:
@@ -270,9 +270,21 @@ def _getColor(*color):
         assert (len(color[0]) == 4)
         return color[0]
     if len(color) == 1:
-        # one value: None or a gray code
-        if color[0] == None: return None
-        color = (color[0],color[0],color[0],attrib.colorRange[3])
+        # one value: This is tricky, because it could either convey a 
+        # gray code or an argb color.  Processing has the same problem, and we
+        # adopt the same solution, i.e., an integer with any high 8 bits set or
+        # bigger than the allowed range for the first coordinate is viewed
+        # as an argb color. Otherwise, it is regarded as a gray code
+        n = color[0]
+        print "n=",n
+        if not isinstance(n,float) and (n & 0xff000000 != 0 or n>attrib.colorRange[0]):
+            # argb color: just convert to tuple format and return
+            color = ((n&0xff0000)>>16)/255.0, ((n&0xff00)>>8)/255.0, \
+                    (n&0xff)/255.0, ((n&0xff000000)>>24)/255.0
+            return color
+        else:
+            # a gray value. 
+            color = (color[0],color[0],color[0],attrib.colorRange[3])
     elif len(color) == 2:
         # two values: Gray and Alpha
         color = (color[0],color[0],color[0],color[1])
@@ -285,45 +297,57 @@ def _getColor(*color):
     if attrib.colorMode==HSB: color = hsb_to_rgb(*color)
     return color
 
-# the color data type is merely a 4-tuple as computed by _getColor
-color = _getColor
-
+def color(*args):
+    """This returns a color encoded as an unsigned int."""
+    r,g,b,a = _getColor(*args)
+    return int(a*255)<<24 | int(r*255)<<16 | int(g*255)<<8 | int(b*255)
+    
 def red(color):
     """Red component of the color."""
+    color = _getColor(color)
     return color[0]*attrib.colorRange[0]
 
 def green(color):
     """Green component of the color."""
+    color = _getColor(color)
     return color[1]*attrib.colorRange[1]
     
 def blue(color):
     """Blue component of the color."""
+    color = _getColor(color)
     return color[2]*attrib.colorRange[2]
 
 def alpha(color):
     """Alpha component of the color."""
+    color = _getColor(color)
     return color[3]*attrib.colorRange[3]
 
 def hue(color):
     """Hue component of the color."""
+    color = _getColor(color)
     color = rgb_to_hsb(*color)
     return color[0]*attrib.colorRange[0]
 
 def saturation(color):
     """Saturation component of the color."""
+    color = _getColor(color)
     color = rgb_to_hsb(*color)
     return color[1]*attrib.colorRange[1]
 
 def brightness(color):
     """Brightness component of the color."""
+    color = _getColor(color)
     color = rgb_to_hsb(*color)
     return color[2]*attrib.colorRange[2]
 
 def lerpColor(c1,c2,amt):
     """Returns the linear interpolation between two colors c1 and c2.
     amt is a value between 0.0 and 1.0."""
+    c1 = _getColor(c1)
+    c2 = _getColor(c2)
     amtb = 1.0 - amt
-    return tuple([amtb*x+amt*y for x,y in zip(c1,c2)])
+    r,g,b,a = ([amtb*x+amt*y for x,y in zip(c1,c2)])
+    return int(a*255)<<24 | int(r*255)<<16 | int(g*255)<<8 | int(b*255)
     
 def colorMode(mode,*args):
     """Sets the color system used for specifying colors and the 

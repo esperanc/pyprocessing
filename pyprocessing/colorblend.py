@@ -307,7 +307,8 @@ blendfunc = [blend_blend, blend_add_pin, blend_sub_pin, blend_darkest, blend_lig
 
 def blendColor(c1, c2, MODE):
     """Implements the blending of two colors. MODE is one of the blend mode
-    constants defined in pyprocessing (an integer between 0 and 13)"""
-    return tuplecolor(blendfunc[MODE](intcolor(*c1),intcolor(*c2)))
+    constants defined in pyprocessing (an integer between 0 and 13). This expects
+    colors expressed as integers."""
+    return blendfunc[MODE](c1,c2)
 
 
