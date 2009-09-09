@@ -6,7 +6,14 @@ Other than Python, the only requirement is pyglet, which in turn
 requires OpenGL.
 """
 
-import pyglet,sys,math,ctypes,os
+try:
+    import pyglet
+except:
+    print """The Pyglet package is not present in your Python
+    installation. Please visit http://www.pyglet.org."""
+    exit(-1)
+    
+import sys,math,ctypes,os
 from math import *
 from pyglet.gl import *
 
@@ -24,6 +31,7 @@ from primitives import *
 from shapes import *                        
 from fonts import *
 from transformations import *
+from mathfunctions import *
     
 #************************
 #  CALLBACK FUNCTIONS
@@ -38,6 +46,9 @@ def __draw(*args):
     noLights()
     # set last frame's mouse position in pmouse
     pmouse.x,pmouse.y = pmouse.savex, pmouse.savey
+    # increment frame count and draw
+    frame.count += 1
+    frame.rate = pyglet.clock.get_fps()
     callback.draw()
     # save last mouse position
     pmouse.savex,pmouse.savey=mouse.x,mouse.y
@@ -123,19 +134,19 @@ def on_resize(width, height):
 
 def loop():
     """Enables the periodical refresh of the screen."""
-    attrib.loop = True
+    frame.loop = True
     pyglet.clock.unschedule(__draw)
-    pyglet.clock.schedule(__draw,1.0/attrib.frameRate)
+    pyglet.clock.schedule(__draw,1.0/frame.targetRate)
     
 def noLoop():
     """Disables the periodical refresh of the screen."""
-    attrib.loop = False
+    frame.loop = False
     pyglet.clock.unschedule(__draw)
     
 def frameRate(rate):
     """Sets the frame rate."""        
-    attrib.frameRate = rate
-    if attrib.loop: loop()    
+    frame.targetRate = rate
+    if frame.loop: loop()    
 
 def size(nx=screen.width,ny=screen.height,fullscreen=False,resizable=False,caption="PyProcessing"):
     """Inits graphics screen with nx x ny pixels.
@@ -163,13 +174,16 @@ def size(nx=screen.width,ny=screen.height,fullscreen=False,resizable=False,capti
                         fullscreen=fullscreen, visible = False)
     screen.width = screen.window.width
     screen.height = screen.window.height
+    
+    # some defaults:
     noSmooth()
-    # frame per seconds init
-    frameRate(60)
     # bezier init
     bezierDetail(30)
-    # enable depth testing
+    # set frame rate
+    frameRate (frame.targetRate)    
+    # enable depth buffering by default
     hint(ENABLE_DEPTH_TEST)
+
     # set up default material and lighting parameters
     glEnable(GL_COLOR_MATERIAL)
     glEnable (GL_NORMALIZE)
@@ -187,7 +201,6 @@ def size(nx=screen.width,ny=screen.height,fullscreen=False,resizable=False,capti
     on_resize(screen.width,screen.height)
     # setup the default camera
     camera()
-
 
 def run():
     """Registers callbacks and starts event loop."""
@@ -207,13 +220,7 @@ def run():
     if 'keyTyped' in maindir: callback.keyTyped = staticmethod(__main__.keyTyped)
     if 'exit' in maindir: callback.exit = staticmethod(__main__.exit)
     if 'screenResized' in maindir: callback.screenResized = staticmethod(__main__.screenResized)
-    
-    # set frame rate
-    frameRate (attrib.frameRate)
-    
-    # enable depth buffering by default
-    hint(ENABLE_DEPTH_TEST)
-    
+        
     # Automatically call setup if function was defined in the main program
     if 'setup' in maindir: 
         __main__.setup()

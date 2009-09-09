@@ -1,7 +1,8 @@
 from constants import *
 import pyglet,os
 
-__all__ = ['mouse', 'pmouse', 'attrib', 'key', 'screen', 'shape', 'config', 'callback']
+__all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'screen', 'shape', 
+           'config', 'callback']
 
 #************************
 #  GLOBALS
@@ -42,8 +43,7 @@ class attrib:
     strokeWeight = 1
     font = {}
     location = pyglet.resource.FileLocation(os.path.dirname(__file__))
-    frameRate = 30
-    loop=True
+    
     rectMode = CORNER
     ellipseMode = CENTER
     textAlign = (LEFT,BASELINE)
@@ -58,6 +58,13 @@ class attrib:
     # depth testing
     depthTest = True
 
+class frame:
+    """Frame rate and the like."""
+    loop=True
+    rate=10 # estimated frame rate
+    targetRate = 60 # the target frame rate
+    count=0 # number of frames displayed since the application started
+    
 class shape:
     """Attributes for shapes."""
     quadric = gl.gluNewQuadric()

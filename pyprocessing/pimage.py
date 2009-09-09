@@ -5,7 +5,7 @@ from constants import *
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image']
+__all__=['PImage', 'loadImage', 'image', 'get', 'save']
 
 # the PImage class
 
@@ -80,6 +80,11 @@ class PImage (object):
             x,y = args
             assert(x>=0 and x<self.width and y>=0 and y<self.height)
             return self.pixels[y*self.width+height]
+    
+    def save(self,filename):
+        """Saves this image as a file of the proper format."""
+        self.img.save(filename)
+    
     def __getWidth(self):
         """Getter for the width property."""
         return self.img.width
@@ -117,4 +122,32 @@ def image(img, x, y, width=None, height=None):
     sprite.draw() 
     glPopMatrix()
 
+def get(*args):
+    """Returns a copy, a part or a pixel of the screen.
+    Arguments are of the form:
+    get()
+    get(x,y)
+    get(x,y,width,height)
+    """
+    if len(args) in (0,4):
+        # the result is an image
+        if len(args) == 0:
+            x,y,width,height = 0,0,screen.width,screen.height
+        else:
+            x,y,width,height = args
+        assert(x>=0 and x<screen.width and y>=0 and y<screen.height and
+               width>0 and height>0 and x+width<=screen.width and 
+               y+height<=screen.height)
+        if width != screen.width or height != screen.height:
+            return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y,width,height)
+        else:
+            return PImage(pyglet.image.get_buffer_manager().get_color_buffer())
+    else:
+        x,y = args
+        return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y)
 
+def save(filename):
+    """Saves the screen into a file. Note that only .png images are supported by
+    pyglet unless PIL is also installed."""
+    get().save(filename)
+    
