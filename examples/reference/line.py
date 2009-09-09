@@ -1,4 +1,4 @@
-from pygraphics import *
+from pyprocessing import *
 
 size(100, 100);
 line(30, 20, 0, 85, 20, 15);

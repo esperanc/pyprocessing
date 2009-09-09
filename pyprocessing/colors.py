@@ -1,3 +1,155 @@
+#************************
+#  COLORS
+#************************
+
+from globs import *
+from constants import *
+
+__all__=['_getColor','color','red','green','blue','alpha','hue','saturation','brightness',
+         'lerpColor', 'colorMode', 'blendColor'] 
+
+def hsb_to_rgb (h,s,v,a):
+    """Simple hsv to rgb conversion. Assumes components specified in range 0.0-1.0."""
+    tmp = h*5.9999
+    hi = int (tmp)
+    f = tmp-hi
+    p = v * (1-s)
+    q = v * (1-f*s)
+    t = v * (1-(1-f)*s)
+    if hi==0:
+        r,g,b = v,t,p
+    elif hi==1:
+        r,g,b = q,v,p
+    elif hi==2:
+        r,g,b = p,v,t
+    elif hi==3:
+        r,g,b = p,q,v
+    elif hi==4:
+        r,g,b = t,p,v
+    else:
+        r,g,b = v,p,q
+    return r,g,b,a
+
+def rgb_to_hsb(r,g,b,a): 
+    """Simple rgb to hsb conversion. Assumes components specified in range 0.0-1.0."""
+    maxval = max(r,g,b)
+    minval = min(r,g,b)
+    if maxval==minval:
+        h = 0.0
+    elif maxval==r:
+        h = ((60 * (g-b)/(maxval-minval) + 360) % 360) / 360.0
+    elif maxval==g:
+        h = (60 * (b-r)/(maxval-minval) + 120) / 360.0
+    else:
+        h = (60 * (r-g)/(maxval-minval) + 240) / 360.0
+    if maxval==0.0:
+        s = 0.0
+    else:
+        s = (maxval-minval)/maxval
+    v = maxval
+    return (h,s,v,a)
+    
+def _getColor(*color):
+    """Analyzes the color arguments and returns a proper 4-float tuple or None"""
+        
+    if len(color) == 1 and type(color[0])==tuple: 
+        # a tuple, i.e., a value of type color, was passed rather than in-line values:
+        # no transformation takes place
+        assert (len(color[0]) == 4)
+        return color[0]
+    if len(color) == 1:
+        # one value: This is tricky, because it could either convey a 
+        # gray code or an argb color.  Processing has the same problem, and we
+        # adopt the same solution, i.e., an integer with any high 8 bits set or
+        # bigger than the allowed range for the first coordinate is viewed
+        # as an argb color. Otherwise, it is regarded as a gray code
+        n = color[0]
+        if not isinstance(n,float) and (n & 0xff000000 != 0 or n>attrib.colorRange[0]):
+            # argb color: just convert to tuple format and return
+            color = ((n&0xff0000)>>16)/255.0, ((n&0xff00)>>8)/255.0, \
+                    (n&0xff)/255.0, ((n&0xff000000)>>24)/255.0
+            return color
+        else:
+            # a gray value. 
+            color = (color[0],color[0],color[0],attrib.colorRange[3])
+    elif len(color) == 2:
+        # two values: Gray and Alpha
+        color = (color[0],color[0],color[0],color[1])
+    elif len(color) == 3:
+        # three values: RGB
+        color = (color[0],color[1],color[2],attrib.colorRange[3])
+    else:
+        assert(len(color)==4)
+    color = tuple(float(x)/r for x,r in zip(color,attrib.colorRange))
+    if attrib.colorMode==HSB: color = hsb_to_rgb(*color)
+    return color
+
+def color(*args):
+    """This returns a color encoded as an unsigned int."""
+    r,g,b,a = _getColor(*args)
+    return int(a*255)<<24 | int(r*255)<<16 | int(g*255)<<8 | int(b*255)
+    
+def red(color):
+    """Red component of the color."""
+    color = _getColor(color)
+    return color[0]*attrib.colorRange[0]
+
+def green(color):
+    """Green component of the color."""
+    color = _getColor(color)
+    return color[1]*attrib.colorRange[1]
+    
+def blue(color):
+    """Blue component of the color."""
+    color = _getColor(color)
+    return color[2]*attrib.colorRange[2]
+
+def alpha(color):
+    """Alpha component of the color."""
+    color = _getColor(color)
+    return color[3]*attrib.colorRange[3]
+
+def hue(color):
+    """Hue component of the color."""
+    color = _getColor(color)
+    color = rgb_to_hsb(*color)
+    return color[0]*attrib.colorRange[0]
+
+def saturation(color):
+    """Saturation component of the color."""
+    color = _getColor(color)
+    color = rgb_to_hsb(*color)
+    return color[1]*attrib.colorRange[1]
+
+def brightness(color):
+    """Brightness component of the color."""
+    color = _getColor(color)
+    color = rgb_to_hsb(*color)
+    return color[2]*attrib.colorRange[2]
+
+def lerpColor(c1,c2,amt):
+    """Returns the linear interpolation between two colors c1 and c2.
+    amt is a value between 0.0 and 1.0."""
+    c1 = _getColor(c1)
+    c2 = _getColor(c2)
+    amtb = 1.0 - amt
+    r,g,b,a = ([amtb*x+amt*y for x,y in zip(c1,c2)])
+    return int(a*255)<<24 | int(r*255)<<16 | int(g*255)<<8 | int(b*255)
+    
+def colorMode(mode,*args):
+    """Sets the color system used for specifying colors and the 
+    component ranges"""
+    attrib.colorMode = mode
+    if len(args)==0:
+        pass
+    elif len(args)==1:
+        attrib.colorRange = args*4
+    elif len(args)==3:
+        attrib.colorRange = (args[0],args[1],args[2],attrib.colorRange[3])
+    else:
+        assert(len(args)==4)
+        attrib.colorRange = args
+
 # These are helper routines (grabbed from Processing's Pimage.java source)
 # They are used to define the various blending mode functions. They
 # assume 8-bit integer color coordinates

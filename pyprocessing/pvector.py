@@ -1,5 +1,7 @@
 from math import sqrt
 
+__all__ = ['PVector']
+
 class PVector(list):
     """A vector class that mimics Processing's PVector class."""
 
