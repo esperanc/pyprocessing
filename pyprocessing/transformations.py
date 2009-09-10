@@ -8,7 +8,7 @@ from globs import *
 from constants import *
 from math import *
 
-__all__=['pushMatrix', 'popMatrix', 'applyMatrix', 'getMatrix',
+__all__=['pushMatrix', 'popMatrix', 'resetMatrix', 'applyMatrix', 'getMatrix',
          'printMatrix', 'getProjection', 'printProjection',
          'translate', 'rotate', 'rotateX', 'rotateY', 'rotateZ',
          'scale', 'camera', 'perspective', 'ortho']
