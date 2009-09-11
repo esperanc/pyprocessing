@@ -57,7 +57,6 @@ for o,a in opts:
     elif o == "--interactive":
         mode = 'interactive'
 
-print "here"
 #first read the script
 if len(args)!=1:
     print args
