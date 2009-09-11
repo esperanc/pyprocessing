@@ -6,6 +6,7 @@ import ctypes
 from pyglet.gl import *
 from globs import *
 from constants import *
+from attribs import *
 from colors import _getColor
 
 __all__=['_smoothFixHackBegin', '_smoothFixHackEnd',
