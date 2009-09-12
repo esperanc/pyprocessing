@@ -132,6 +132,28 @@ def on_resize(width, height):
 #  ENVIRONMENT
 #************************
 
+def cursor(*args):
+    """Sets up the cursor type. Arguments:
+    cursor()
+    cursor(MODE)
+    cursor(img,x,y)
+    """
+    canvas.window.set_mouse_visible(True)
+    if len(args)==0:
+        pass
+    elif len(args)==1:
+        canvas.cursor = canvas.window.get_system_mouse_cursor(args[0])
+        canvas.window.set_mouse_cursor(canvas.cursor)
+    elif len(args)==3:
+        canvas.cursor = pyglet.window.ImageMouseCursor(args[0].img, args[1], args[2])
+        canvas.window.set_mouse_cursor(canvas.cursor)
+    else:
+        assert (False, "Wrong number of arguments")
+        
+def noCursor():
+    """Hides the cursor."""
+    canvas.window.set_mouse_visible(False)
+    
 def loop():
     """Enables the periodical refresh of the screen."""
     frame.loop = True

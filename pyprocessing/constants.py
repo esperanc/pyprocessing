@@ -120,3 +120,10 @@ RGB = 'RGB'
 ARGB = 'RGBA'
 ALPHA = 'A'
 
+# cursor types
+ARROW = None
+CROSS = 'crosshair'
+HAND = 'hand'
+MOVE = 'size'
+TEXT = 'text'
+WAIT = 'wait'
