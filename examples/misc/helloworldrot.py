@@ -9,7 +9,7 @@ def draw():
     global ang
     background(0,0,0)
     fill (255)
-    translate (screen.width/2, screen.height/2)
+    translate (canvas.width/2, canvas.height/2)
     rotateZ (ang)
     ang += 0.02
     text("Hello world", 0, 0)

@@ -132,13 +132,13 @@ def get(*args):
     if len(args) in (0,4):
         # the result is an image
         if len(args) == 0:
-            x,y,width,height = 0,0,screen.width,screen.height
+            x,y,width,height = 0,0,canvas.width,canvas.height
         else:
             x,y,width,height = args
-        assert(x>=0 and x<screen.width and y>=0 and y<screen.height and
-               width>0 and height>0 and x+width<=screen.width and 
-               y+height<=screen.height)
-        if width != screen.width or height != screen.height:
+        assert(x>=0 and x<canvas.width and y>=0 and y<canvas.height and
+               width>0 and height>0 and x+width<=canvas.width and 
+               y+height<=canvas.height)
+        if width != canvas.width or height != canvas.height:
             return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y,width,height)
         else:
             return PImage(pyglet.image.get_buffer_manager().get_color_buffer())
@@ -147,7 +147,7 @@ def get(*args):
         return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y)
 
 def save(filename):
-    """Saves the screen into a file. Note that only .png images are supported by
+    """Saves the canvas into a file. Note that only .png images are supported by
     pyglet unless PIL is also installed."""
     get().save(filename)
     

@@ -1,7 +1,7 @@
 from constants import *
 import pyglet,os
 
-__all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'screen', 'shape', 
+__all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'canvas', 'shape', 
            'config', 'callback']
 
 #************************
@@ -30,11 +30,11 @@ class key:
     modifiers = None
     pressed = False
 
-class screen:
-    """Stores screen attributes"""
+class canvas:
+    """Stores the drawing window attributes"""
     window = None 
-    width = 300
-    height = 300
+    width = 100
+    height = 100
     
 class attrib:
     """Drawing attributes"""

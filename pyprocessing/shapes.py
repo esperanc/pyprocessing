@@ -8,6 +8,7 @@ import ctypes
 from pyglet.gl import *
 from globs import *
 from constants import *
+from pvector import *
 from primitives import _smoothFixHackBegin,_smoothFixHackEnd
 from math import *
 

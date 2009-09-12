@@ -8,7 +8,7 @@ def setup():
 
 def draw(): 
     # clear the whole screen
-    w,h = screen.width, screen.height
+    w,h = canvas.width, canvas.height
     lights()
     noStroke()
     background(200)

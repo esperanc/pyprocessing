@@ -13,7 +13,7 @@ def draw():
     for i in range(nx):
         for j in range(ny):
             pushMatrix()
-            translate((i+0.5)*screen.width/nx,(j+0.5)*screen.height/ny)
+            translate((i+0.5)*canvas.width/nx,(j+0.5)*canvas.height/ny)
             sphere(10)
             popMatrix()
 

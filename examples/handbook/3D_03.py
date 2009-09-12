@@ -10,9 +10,9 @@ def setup() :
 def draw():
   background(0);
   lights();
-  translate(screen.width / 2, screen.height / 2);
-  rotateY(mouse.x * PI / screen.width);
-  rotateZ(mouse.y * -PI / screen.height);
+  translate(canvas.width / 2, canvas.height / 2);
+  rotateY(mouse.x * PI / canvas.width);
+  rotateZ(mouse.y * -PI / canvas.height);
   noStroke();
   fill(255, 255, 255);
   translate(0, -40, 0);

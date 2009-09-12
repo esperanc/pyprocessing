@@ -8,7 +8,7 @@ def draw():
   background(200);
   if (mouse.pressed):
      camera(0,0,0,0,0,-1,0,1,0)
-     ortho(0,screen.width,0,screen.height,-screen.height,screen.height)
+     ortho(0,canvas.width,0,canvas.height,-canvas.height,canvas.height)
   else:
      camera()
      perspective()

@@ -91,8 +91,8 @@ def camera (*args):
     glLoadIdentity()
     if len(args)==0:
         # default camera
-        gluLookAt (screen.width/2.0, screen.height/2.0, (screen.height/2.0) / tan(PI*60.0 / 360.0), 
-                   screen.width/2.0, screen.height/2.0, 0, 0, 1, 0)
+        gluLookAt (canvas.width/2.0, canvas.height/2.0, (canvas.height/2.0) / tan(PI*60.0 / 360.0), 
+                   canvas.width/2.0, canvas.height/2.0, 0, 0, 1, 0)
     else:
         assert (len(args)==9)
         gluLookAt (*args)
@@ -109,8 +109,8 @@ def perspective(*args):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     if len(args)==0:
-        cameraZ = screen.height/2.0 / math.tan(math.pi*60/360)
-        gluPerspective(60, screen.width*1.0/screen.height, cameraZ/100.0, cameraZ*10.0)
+        cameraZ = canvas.height/2.0 / math.tan(math.pi*60/360)
+        gluPerspective(60, canvas.width*1.0/canvas.height, cameraZ/100.0, cameraZ*10.0)
     else:
         assert(len(args)==4)
         fov,aspect,znear,zfar = args
@@ -126,13 +126,13 @@ def ortho(*args):
     left and right are the minimum and maximum x values, top and bottom are 
     the minimum and maximum y values, and near and far are the minimum and 
     maximum z values. If no parameters are given, the default is used: 
-    ortho(0, screen.width, 0, screen.height, -10, 10)."""
+    ortho(0, canvas.width, 0, canvas.height, -10, 10)."""
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     if len(args)==0:
-        left, right = 0, screen.width
-        bottom, top =  0, screen.height
-        near, far = -screen.height*2, screen.height*2 # a saner default than processing's
+        left, right = 0, canvas.width
+        bottom, top =  0, canvas.height
+        near, far = -canvas.height*2, canvas.height*2 # a saner default than processing's
     else:
         assert(len(args)==6)
         left, right, bottom, top, near, far = args
