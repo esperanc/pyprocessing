@@ -174,7 +174,7 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
     """Inits graphics screen with nx x ny pixels.
     Caption is the window title."""
     # Set up canvas
-    global canvas
+    global canvas,screen
     if canvas.window != None:
         # get rid of window created on an earlier call to size
         canvas.window.close()
@@ -196,6 +196,10 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
                         fullscreen=fullscreen, visible = False)
     canvas.width = canvas.window.width
     canvas.height = canvas.window.height
+    
+    # get the screen dimensions
+    screen.width = canvas.window.screen.width
+    screen.height = canvas.window.screen.height
     
     # some defaults:
     noSmooth()
@@ -266,7 +270,7 @@ def run():
     pyglet.app.run()
 
 # create a default window
-size(100,100)
+if canvas.window == None: size(100,100)
 
 #test program
 if __name__=="__main__":

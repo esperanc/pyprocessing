@@ -2,7 +2,7 @@ from constants import *
 import pyglet,os
 
 __all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'canvas', 'shape', 
-           'config', 'callback']
+           'screen', 'config', 'callback']
 
 #************************
 #  GLOBALS
@@ -35,6 +35,11 @@ class canvas:
     window = None 
     width = 100
     height = 100
+    
+class screen:
+    """Current window properties."""
+    width = None
+    height = None
     
 class attrib:
     """Drawing attributes"""
@@ -100,3 +105,4 @@ class callback:
     draw = mousePressed = mouseReleased = mouseClicked = mouseDragged = \
            mouseMoved = keyPressed = keyReleased = keyTyped = exit = \
            screenResized = dummy
+
