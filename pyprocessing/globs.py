@@ -89,7 +89,7 @@ class config:
     # some primitives such as arc or text
     coordInversionHack = True 
     # try to get around the artifacts when drawing filled polygons in smooth mode
-    smoothFixHack = True 
+    smoothFixHack = False # off by default 
     smoothTurnedOn = False # tells whether smooth was on before the hack
     
 class callback:

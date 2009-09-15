@@ -185,8 +185,8 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
     # After the run() function is called, the window is made visible
     if fullscreen: nx,ny = None,None
     try:
-        # Try and create a window with double buffer
-        canvas.config = Config(depth_size=24, alpha_size=8, double_buffer=True,)
+        # Try and create a window with multisample
+        canvas.config = Config(depth_size=24, samples = 4, alpha_size=8, double_buffer=True)
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException:
@@ -279,15 +279,18 @@ if __name__=="__main__":
         smooth()
         textFont (createFont ("Times", size=24))
         fill (0)
-        text("Hello World", 10, 42)
-        if mouse.button == LEFT:
-            fill(255,0,0,100)
-            noStroke()
-            ellipse(mouse.x,mouse.y,60,60)
-        elif mouse.button == RIGHT:
-            fill(255)
-            text ("Python Processing", mouse.x, mouse.y)
+        text("Python Processing", 10, 42)
+        if mouse.pressed:
+            if mouse.button == LEFT:
+                fill(255,0,0,100)
+                noStroke()
+                ellipse(mouse.x,mouse.y, 60, 60)
+            elif mouse.button == RIGHT:
+                fill(0,128,255)
+                noStroke()
+                rect (mouse.x, mouse.y, 60, 60)
     size(300,300)
     ellipseMode(CENTER)
+    rectMode (CENTER)
     run()
 
