@@ -1,0 +1,42 @@
+from pyprocessing import *
+
+def setup():
+  size(500, 500);
+  noFill();
+
+def draw():
+  background(0);
+ 
+  pushMatrix();
+  # start at the middle of the screen
+  translate(canvas.width/2, canvas.height/2, -200);     
+  # some random rotation to make things interesting
+  rotateY(1.0); #yrot);
+  rotateZ(2.0); #zrot);
+  # rotate in X a little more each frame
+  rotateX(frame.count / 100.0);
+  # offset from center
+  translate(0, 150, 0);
+ 
+  # draw a white box outline at (0, 0, 0)
+  stroke(255);
+  box(50);
+ 
+  # the box was drawn at (0, 0, 0), store that location
+
+  x = modelX(0, 0, 0);
+  y = modelY(0, 0, 0);
+  z = modelZ(0, 0, 0);
+
+  # clear out all the transformations
+  popMatrix();
+
+  # draw another box at the same (x, y, z) coordinate as the other
+  pushMatrix();
+  translate(x, y, z);
+  stroke(255, 0, 0);
+  box(50);
+  popMatrix();
+
+
+run()
