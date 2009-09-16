@@ -11,7 +11,9 @@ from math import *
 __all__=['pushMatrix', 'popMatrix', 'resetMatrix', 'applyMatrix', 'getMatrix',
          'printMatrix', 'getProjection', 'printProjection',
          'translate', 'rotate', 'rotateX', 'rotateY', 'rotateZ',
-         'scale', 'camera', 'perspective', 'ortho']
+         'scale', 'camera', 'perspective', 'ortho',
+         'screenXYZ', 'screenX', 'screenY', 'screenZ',
+         'modelXYZ','modelX', 'modelY', 'modelZ']
          
 def pushMatrix(): 
     """Saves current transformation"""
@@ -142,4 +144,41 @@ def ortho(*args):
     # invert the y axis
     if config.coordInversionHack: bottom, top = top, bottom
     glOrtho(left, right, bottom, top, near, far)
-    glMatrixMode(GL_MODELVIEW)    
+    glMatrixMode(GL_MODELVIEW)
+    
+def screenXYZ (ox,oy,oz):
+    """Returns the projected space coordinates of object coordinates ox,oy,oz"""
+    # variables for calling gluUnProject
+    viewport = (ctypes.c_int*4)()
+    projmatrix = (ctypes.c_double*16)()
+    mviewmatrix = (ctypes.c_double*16)()
+    sx,sy,sz = (ctypes.c_double)(),(ctypes.c_double)(),(ctypes.c_double)()
+    # get current transformation state
+    glGetIntegerv(GL_VIEWPORT, viewport)
+    glGetDoublev(GL_MODELVIEW_MATRIX, mviewmatrix)
+    glGetDoublev(GL_PROJECTION_MATRIX, projmatrix)
+    # call gluUnProject
+    gluProject(ox,oy,oz,
+               mviewmatrix,projmatrix,viewport,
+               ctypes.byref(sx),ctypes.byref(sy),ctypes.byref(sz))
+    if config.coordInversionHack: 
+        return sx.value, canvas.height-sy.value, sz.value
+    else:
+        return sx.value, sy.value, sz.value
+    
+def screenX (ox,oy,oz):
+    """Returns the x coordinate of screenXYZ(ox,oy,oz)"""
+    return screenXYZ(ox,oy,oz)[0]
+
+def screenY (ox,oy,oz):
+    """Returns the y coordinate of screenXYZ(ox,oy,oz)"""
+    return screenXYZ(ox,oy,oz)[1]
+    
+def screenZ (ox,oy,oz):
+    """Returns the Z coordinate of screenXYZ(ox,oy,oz)"""
+    return screenXYZ(ox,oy,oz)[2]
+
+# As far as I can understand, modelX, modelY and modelZ are synonyms of 
+# screenX, screenY and screenZ
+modelX, modelY, modelZ, modelXYZ = screenX, screenY, screenZ, screenXYZ
+
