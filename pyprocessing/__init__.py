@@ -190,7 +190,7 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
     if fullscreen: nx,ny = None,None
     try:
         # Try and create a window with multisample
-        canvas.config = Config(depth_size=24, samples = 4, alpha_size=8, double_buffer=True)
+        canvas.config = Config(depth_size=24, samples = 4, sample_buffers=1, alpha_size=8, double_buffer=True)
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException:
@@ -198,6 +198,7 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
         # Fall back default config
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, caption=caption, 
                         fullscreen=fullscreen, visible = False)
+
     canvas.width = canvas.window.width
     canvas.height = canvas.window.height
     

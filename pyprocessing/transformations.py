@@ -89,8 +89,11 @@ def camera (*args):
     a vector to be used as the up direction (upx, upy, upz). If no args
     are passed, the standard camera is created."""
     glLoadIdentity()
+    
     if len(args)==0:
         # default camera
+        # Add a half-pixel shift in order to obtain sharper lines
+        glTranslatef(0.5,0.5,0)
         gluLookAt (canvas.width/2.0, canvas.height/2.0, (canvas.height/2.0) / tan(PI*60.0 / 360.0), 
                    canvas.width/2.0, canvas.height/2.0, 0, 0, 1, 0)
     else:

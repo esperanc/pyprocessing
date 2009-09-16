@@ -101,7 +101,7 @@ def _installTakeSnapshot(dt):
 
     global _snapNumber
     _snapNumber = 0
-    screen.window.push_handlers(on_key_press)
+    canvas.window.push_handlers(on_key_press)
     
 pyglet.clock.schedule_once(_installTakeSnapshot, 0.2)
 

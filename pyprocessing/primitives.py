@@ -91,7 +91,7 @@ def arc(x,y,width,height, start, stop):
     if stop<start: start,stop=stop,start
     sweep = math.degrees(stop-start)
     start = math.degrees(start)+90
-    npts = min(5,sweep)
+    npts = min(5,abs(sweep))
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
