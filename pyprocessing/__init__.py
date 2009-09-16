@@ -165,6 +165,10 @@ def noLoop():
     frame.loop = False
     pyglet.clock.unschedule(__draw)
     
+def redraw():
+    """Signals that the 'draw()' callback should be called."""
+    pyglet.clock.schedule_once(__draw,0)
+    
 def frameRate(rate):
     """Sets the frame rate."""        
     frame.targetRate = rate
