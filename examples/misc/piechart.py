@@ -10,8 +10,8 @@ lastAng = 0;
 smooth()
 for a in angs:
   fill(a * 3.0);
-  arc(canvas.width/2, canvas.height/2, diameter, diameter, lastAng, 
+  arc(width/2, height/2, diameter, diameter, lastAng, 
       lastAng+radians(a))
   lastAng += radians(a)
-    
+
 run()

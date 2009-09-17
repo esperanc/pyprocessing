@@ -25,13 +25,13 @@ def setup():
   background(0);
   smooth();
   global fade,spin
-  fade = 255.0/(canvas.width/2.0/shift);
-  spin = 360.0/(canvas.width/2.0/shift);
-  p[0] = PVector (-canvas.width/2, canvas.height/2)
-  p[1] = PVector (canvas.width/2, canvas.height/2)
-  p[2] = PVector (0, -canvas.height/2)
+  fade = 255.0/(width/2.0/shift);
+  spin = 360.0/(width/2.0/shift);
+  p[0] = PVector (-width/2, height/2)
+  p[1] = PVector (width/2, height/2)
+  p[2] = PVector (0, -height/2)
   noStroke()
-  translate(canvas.width/2, canvas.height/2)
+  translate(width/2, height/2)
   triBlur()
 
 def triBlur():

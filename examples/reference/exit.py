@@ -8,8 +8,8 @@ def setup():
 def draw():
   background(204);
   global x
-  x = (x+1)%canvas.width
-  line(x, 0, x, canvas.height); 
+  x = (x+1)%width
+  line(x, 0, x, height); 
 
 def mousePressed():
   exit()

@@ -132,14 +132,14 @@ def get(*args):
     if len(args) in (0,4):
         # the result is an image
         if len(args) == 0:
-            x,y,width,height = 0,0,canvas.width,canvas.height
+            x,y,w,h = 0,0,width,height
         else:
-            x,y,width,height = args
-        assert(x>=0 and x<canvas.width and y>=0 and y<canvas.height and
-               width>0 and height>0 and x+width<=canvas.width and 
-               y+height<=canvas.height)
-        if width != canvas.width or height != canvas.height:
-            return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y,width,height)
+            x,y,w,h = args
+        assert(x>=0 and x<width and y>=0 and y<height and
+               w>0 and h>0 and x+w<=width and 
+               y+h<=height)
+        if w != width or h != height:
+            return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y,w,h)
         else:
             return PImage(pyglet.image.get_buffer_manager().get_color_buffer())
     else:

@@ -9,7 +9,7 @@ def draw():
  
   pushMatrix();
   # start at the middle of the screen
-  translate(canvas.width/2, canvas.height/2, -200);     
+  translate(width/2, height/2, -200);     
   # some random rotation to make things interesting
   rotateY(1.0); #yrot);
   rotateZ(2.0); #zrot);

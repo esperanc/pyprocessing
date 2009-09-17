@@ -2,8 +2,8 @@ from pyprocessing import *
 
 noFill();
 fov = PI/3.0;
-cameraZ = (canvas.height/2.0) / tan(fov/2.0);
-perspective(fov, float(canvas.width)/float(canvas.height), 
+cameraZ = (height/2.0) / tan(fov/2.0);
+perspective(fov, float(width)/float(height), 
             cameraZ/10.0, cameraZ*10.0);
 translate(50, 50, 0);
 rotateX(-PI/6);

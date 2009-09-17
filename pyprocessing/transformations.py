@@ -96,8 +96,8 @@ def camera (*args):
         # default camera
         # Add a half-pixel shift in order to obtain sharper lines
         glTranslatef(0.5,0.5,0)
-        gluLookAt (canvas.width/2.0, canvas.height/2.0, (canvas.height/2.0) / tan(PI*60.0 / 360.0), 
-                   canvas.width/2.0, canvas.height/2.0, 0, 0, 1, 0)
+        gluLookAt (width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), 
+                   width/2.0, height/2.0, 0, 0, 1, 0)
     else:
         assert (len(args)==9)
         gluLookAt (*args)
@@ -114,8 +114,8 @@ def perspective(*args):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     if len(args)==0:
-        cameraZ = canvas.height/2.0 / math.tan(math.pi*60/360)
-        gluPerspective(60, canvas.width*1.0/canvas.height, cameraZ/100.0, cameraZ*10.0)
+        cameraZ = height/2.0 / math.tan(math.pi*60/360)
+        gluPerspective(60, width*1.0/height, cameraZ/100.0, cameraZ*10.0)
     else:
         assert(len(args)==4)
         fov,aspect,znear,zfar = args
@@ -131,13 +131,13 @@ def ortho(*args):
     left and right are the minimum and maximum x values, top and bottom are 
     the minimum and maximum y values, and near and far are the minimum and 
     maximum z values. If no parameters are given, the default is used: 
-    ortho(0, canvas.width, 0, canvas.height, -10, 10)."""
+    ortho(0, width, 0, height, -10, 10)."""
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     if len(args)==0:
-        left, right = 0, canvas.width
-        bottom, top =  0, canvas.height
-        near, far = -canvas.height*2, canvas.height*2 # a saner default than processing's
+        left, right = 0, width
+        bottom, top =  0, height
+        near, far = -height*2, height*2 # a saner default than Processing's
     else:
         assert(len(args)==6)
         left, right, bottom, top, near, far = args
@@ -162,7 +162,7 @@ def screenXYZ (ox,oy,oz):
                mviewmatrix,projmatrix,viewport,
                ctypes.byref(sx),ctypes.byref(sy),ctypes.byref(sz))
     if config.coordInversionHack: 
-        return sx.value, canvas.height-sy.value, sz.value
+        return sx.value, height-sy.value, sz.value
     else:
         return sx.value, sy.value, sz.value
     

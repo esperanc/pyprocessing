@@ -32,7 +32,17 @@ from shapes import *
 from fonts import *
 from transformations import *
 from mathfunctions import *
-    
+
+# We infringe good Python practice here by polluting the
+# __builtin__ namespace with global symbols width and height,
+# which are the two most commonly used "global" variables
+# in Processing. This is done in two places: the size() function
+# and the on_resize() callback. 
+
+import __builtin__
+
+__builtin__.width = __builtin__.height = 0
+
 #************************
 #  CALLBACK FUNCTIONS
 #************************
@@ -61,7 +71,7 @@ def on_close():
 def on_mouse_press(x, y, button, modifiers):
     """Called when a mouse button is pressed."""
     pmouse.x,pmouse.y = mouse.x,mouse.y
-    mouse.x, mouse.y = x, canvas.height - y
+    mouse.x, mouse.y = x, height - y
     if button == 4: button = RIGHT
     elif button == 2: button = CENTER
     elif button == 1: button = LEFT
@@ -73,7 +83,7 @@ def on_mouse_press(x, y, button, modifiers):
 def on_mouse_release(x, y, button, modifiers):
     """Called when a mouse button is released."""
     pmouse.x,pmouse.y = mouse.x,mouse.y
-    mouse.x, mouse.y = x, canvas.height - y
+    mouse.x, mouse.y = x, height - y
     mouse.pressed = False
     callback.mouseClicked()
     callback.mouseReleased()
@@ -104,22 +114,22 @@ def on_key_release(symbol, modifiers):
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
     """Called when mouse is moved with at least one button pressed."""
     pmouse.x,pmouse.y = mouse.x,mouse.y
-    mouse.x, mouse.y = x, canvas.height - y
+    mouse.x, mouse.y = x, height - y
     mouse.pressed = True
     callback.mouseDragged()
 
 def on_mouse_motion(x, y, dx, dy):
     """Called when mouse is moved with no buttons pressed."""
     pmouse.x,pmouse.y = mouse.x,mouse.y
-    mouse.x, mouse.y = x, canvas.height - y
+    mouse.x, mouse.y = x, height - y
     mouse.button = None
     mouse.pressed = False
     callback.mouseMoved()
     
 def on_resize(width, height):
     """Called whenever the window is resized."""
-    canvas.width = width
-    canvas.height = height
+    __builtin__.width = width
+    __builtin__.height = height
     # Set up a reasonable perspective view
     glViewport(0, 0, width, height)
     perspective()
@@ -174,7 +184,7 @@ def frameRate(rate):
     frame.targetRate = rate
     if frame.loop: loop()    
 
-def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,caption="PyProcessing"):
+def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="PyProcessing"):
     """Inits graphics screen with nx x ny pixels.
     Caption is the window title."""
     # Set up canvas
@@ -199,8 +209,9 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, caption=caption, 
                         fullscreen=fullscreen, visible = False)
 
-    canvas.width = canvas.window.width
-    canvas.height = canvas.window.height
+    # set the width and height global variables
+    __builtin__.width = canvas.window.width
+    __builtin__.height = canvas.window.width
     
     # get the screen dimensions
     screen.width = canvas.window.screen.width
@@ -229,7 +240,7 @@ def size(nx=canvas.width,ny=canvas.height,fullscreen=False,resizable=False,capti
     # clear canvas with medium gray
     background(200)
     # force a resize call
-    on_resize(canvas.width,canvas.height)
+    on_resize(__builtin__.width,__builtin__.height)
     # setup the default camera
     camera()
 

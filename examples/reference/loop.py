@@ -10,8 +10,8 @@ def draw():
     global x
     background(204)
     x = x+0.5
-    if x>canvas.width: x = 0
-    line(x,0,x,canvas.height)
+    if x>width: x = 0
+    line(x,0,x,height)
 
 
 def mousePressed(): loop()

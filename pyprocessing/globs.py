@@ -33,8 +33,9 @@ class key:
 class canvas:
     """Stores the drawing window attributes"""
     window = None 
-    width = 100
-    height = 100
+    # These two symbols were relocated to the __builtin__ namespace
+    #width = 100
+    #height = 100
     
 class screen:
     """Current window properties."""

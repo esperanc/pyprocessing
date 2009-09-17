@@ -8,7 +8,7 @@ def setup():
 
 def draw():
   background(204);
-  line(x, 0, x, canvas.height); 
+  line(x, 0, x, height); 
 
 def mousePressed():
   global x

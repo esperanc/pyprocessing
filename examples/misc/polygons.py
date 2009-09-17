@@ -13,7 +13,7 @@ def draw():
     background(200)
     beginShape()
     for x,y in poly: vertex(x,y)
-    endShape()
+    endShape(CLOSE)
 
 run()
 

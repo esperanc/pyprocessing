@@ -19,12 +19,12 @@ def draw():
   # Draw line in 2D at same x value
   # Notice the parallax
   stroke(102);
-  line(x, 0, 0, x, canvas.height, 0);
+  line(x, 0, 0, x, height, 0);
   
   # Draw 2D line to match the x value
   # element drawn at z = -100 
   stroke(0);
   theX = screenX(x, y, z);
-  line(theX, 0, 0, theX, canvas.height, 0);
+  line(theX, 0, 0, theX, height, 0);
 
 run()

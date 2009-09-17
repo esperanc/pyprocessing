@@ -26,7 +26,7 @@ def htmlText(string, x, y, z = 0):
     if attrib.fillColor != None:
         r,g,b,a=[int (c*255) for c in attrib.fillColor]        
         label = pyglet.text.HTMLLabel(string, location=attrib.location,
-                                      x=x, y=y, width=canvas.width,
+                                      x=x, y=y, width=width,
                                       anchor_x=textAlignConst[attrib.textAlign[0]],
                                       anchor_y=textAlignConst[attrib.textAlign[1]],
                                       multiline=True)

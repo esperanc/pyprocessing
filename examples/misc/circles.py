@@ -14,7 +14,7 @@ def mouseDragged():
 def draw():
     fill(0,10)
     noStroke()
-    rect(0,0,canvas.width,canvas.height)
+    rect(0,0,width,height)
     stroke(255)
     nl = l[:]
     l[:]=[]
