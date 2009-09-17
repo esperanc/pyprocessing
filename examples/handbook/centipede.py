@@ -23,8 +23,8 @@ def setup():
   noStroke()
 
   global x,y
-  x = canvas.width/2
-  y = canvas.height/2
+  x = width/2
+  y = height/2
 
   r1 = 10
   r2 = 100

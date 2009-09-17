@@ -20,13 +20,13 @@ angle = PI;
 angle2 = PI;
 magnitude = 3;
 
-for i in range(-magnitude,canvas.height+magnitude,12):
+for i in range(-magnitude,height+magnitude,12):
 
   angle2 = angle;
   
   fill(0);
   beginShape(TRIANGLE_STRIP);
-  for x in range(0,canvas.width+1,8):
+  for x in range(0,width+1,8):
     y = i + (sin(angle)* magnitude);
     angle += PI/24.0;
     y2 = i+4 + (sin(angle+PI/12)* magnitude);

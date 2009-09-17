@@ -200,11 +200,11 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="PyProcessing"):
     if fullscreen: nx,ny = None,None
     try:
         # Try and create a window with multisample
-        canvas.config = Config(depth_size=24, samples = 4, sample_buffers=1, alpha_size=8, double_buffer=True)
+        canvas.config = Config(sample_buffers=1)
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
-    except pyglet.window.NoSuchConfigException:
-        print ("No such conf")
+    except pyglet.window.NoSuchConfigException, msg:
+        print "No multisample:",msg
         # Fall back default config
         canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, caption=caption, 
                         fullscreen=fullscreen, visible = False)
