@@ -37,6 +37,7 @@ def background(*color):
 
 def ellipse(x,y,width,height):
     """Draws an ellipse with lower left corner at (x,y) and size (width,height)"""
+    npts = 100 # a reasonable sampling
     if attrib.ellipseMode==CENTER:
         x -= width/2
         y -= height/2
@@ -56,14 +57,14 @@ def ellipse(x,y,width,height):
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
-        gluDisk(shape.quadric,0,0.5,360,1)
+        gluDisk(shape.quadric,0,0.5,npts,1)
         _smoothFixHackEnd()
     glPushAttrib(GL_POLYGON_BIT)
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     glLineWidth (attrib.strokeWeight)
     if attrib.strokeColor != None:
         glColor4f(*attrib.strokeColor)
-        gluDisk(shape.quadric,0.5,0.5,360,1)
+        gluDisk(shape.quadric,0.5,0.5,npts,1)
     glPopAttrib()    
     glPopMatrix()
 

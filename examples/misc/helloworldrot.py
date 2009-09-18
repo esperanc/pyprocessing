@@ -11,7 +11,7 @@ def draw():
     fill (255)
     translate (width/2, height/2)
     rotateZ (ang)
-    ang += 0.02
+    ang += 0.01
     text("Hello world", 0, 0)
 
 run()

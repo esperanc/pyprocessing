@@ -17,6 +17,8 @@ which provide the actual graphics rendering. Since these are multiplatform,
 so is pyprocessing.
 '''
 
+# MAKE SURE THE VERSION BELOW IS THE SAME AS THAT IN CONSTANTS.PY!
+
 setup(name='PyProcessing',
       version='0.1.1',
       description='A Processing-like environment for Python',

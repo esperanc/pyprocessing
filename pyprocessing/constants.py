@@ -5,6 +5,8 @@ import pyglet.gl as gl
 #  CONSTANTS
 #************************
 
+version = "0.1.1" # This version of pyprocessing
+
 #keycodes
 F1 = 65470
 F2 = 65471

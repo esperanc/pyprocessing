@@ -126,12 +126,21 @@ def on_mouse_motion(x, y, dx, dy):
     mouse.pressed = False
     callback.mouseMoved()
     
-def on_resize(width, height):
+def on_resize(w, h):
     """Called whenever the window is resized."""
-    __builtin__.width = width
-    __builtin__.height = height
+    # beware of the margin!
+    mx, my = canvas.margin
+    if max(mx,my)>0 and w == width+mx and h == height+my: 
+        # This window has the same size as specified by
+        # size(). keep the margin!
+        pass
+    else:
+        # get rid of the margin
+        canvas.margin = mx,my = 0,0
+        __builtin__.width = w
+        __builtin__.height = h
     # Set up a reasonable perspective view
-    glViewport(0, 0, width, height)
+    glViewport(mx/2, my/2, width, height)
     perspective()
     if callback.screenResized != callback.dummy:
         # User will handle the resize
@@ -158,7 +167,7 @@ def cursor(*args):
         canvas.cursor = pyglet.window.ImageMouseCursor(args[0].img, args[1], args[2])
         canvas.window.set_mouse_cursor(canvas.cursor)
     else:
-        assert (False, "Wrong number of arguments")
+        raise ValueError, "Wrong number of arguments"
         
 def noCursor():
     """Hides the cursor."""
@@ -184,7 +193,8 @@ def frameRate(rate):
     frame.targetRate = rate
     if frame.loop: loop()    
 
-def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="PyProcessing"):
+def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
+         multisample=True):
     """Inits graphics screen with nx x ny pixels.
     Caption is the window title."""
     # Set up canvas
@@ -194,24 +204,42 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="PyProcessing"):
         canvas.window.close()
         canvas.window = None
     
-    # create a window. Obs.: it is created initially with visible=False so
+    # Create a window. 
+    #
+    # Note 1: It is created initially with visible=False so
     # that the default window may be silently destroyed and recreated.
-    # After the run() function is called, the window is made visible
-    if fullscreen: nx,ny = None,None
+    # After the run() function is called, the window is made visible.
+    # 
+    # Note 2: A margin is defined for small windows. Apparently, 
+    # Pyglet under MS Windows does not cope well with windows with height 
+    # smaller than 120 pixels.
+    #
+    if fullscreen: 
+        sizex,sizey = None,None
+        canvas.margin = (0,0)
+    else:
+        sizex = max(120,nx)
+        sizey = max(120,ny)
+        canvas.margin = (sizex-nx, sizey-ny)
+    if multisample: 
+        canvas.config = Config(sample_buffers=1,samples=4,alpha_size=8,double_buffer=True)
+    else: 
+        canvas.config = Config(double_buffer=True) # a sane default, hopefully
     try:
-        # Try and create a window with multisample
-        canvas.config = Config(sample_buffers=1)
-        canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, fullscreen=fullscreen,
+        # Try and create a window with the requested config
+        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException, msg:
-        print "No multisample:",msg
-        # Fall back default config
-        canvas.window = pyglet.window.Window(nx, ny, resizable=resizable, caption=caption, 
+        print "No suitable context:",msg,"\nGenerating a default context."
+        # Fall back default config for older hardware
+        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, caption=caption, 
                         fullscreen=fullscreen, visible = False)
+        # turn on the fix that prevents trying to antialias polygons
+        config.smoothFixHack = True
 
     # set the width and height global variables
-    __builtin__.width = canvas.window.width
-    __builtin__.height = canvas.window.width
+    __builtin__.width = nx
+    __builtin__.height = ny
     
     # get the screen dimensions
     screen.width = canvas.window.screen.width
@@ -240,7 +268,7 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="PyProcessing"):
     # clear canvas with medium gray
     background(200)
     # force a resize call
-    on_resize(__builtin__.width,__builtin__.height)
+    on_resize(sizex,sizey)
     # setup the default camera
     camera()
 
@@ -296,15 +324,19 @@ if __name__=="__main__":
         textFont (createFont ("Times", size=24))
         fill (0)
         text("Python Processing", 10, 42)
+        fill (255)
+        stroke(0)
+        rect(width/2,height/2,50,50)
         if mouse.pressed:
             if mouse.button == LEFT:
                 fill(255,0,0,100)
                 noStroke()
                 ellipse(mouse.x,mouse.y, 60, 60)
             elif mouse.button == RIGHT:
-                fill(0,128,255)
+                fill(0,128,255,100)
                 noStroke()
                 rect (mouse.x, mouse.y, 60, 60)
+            else: save("test.png")
     size(300,300)
     ellipseMode(CENTER)
     rectMode (CENTER)
