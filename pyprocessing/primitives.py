@@ -30,13 +30,20 @@ def background(*color):
     turned on, also clears the depth buffer."""
     color = _getColor(*color)
     glClearColor (*color)
-    if attrib.depthTest:
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    else:
-        glClear(GL_COLOR_BUFFER_BIT)
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
 def ellipse(x,y,width,height):
     """Draws an ellipse with lower left corner at (x,y) and size (width,height)"""
+    if shape.ellipseFillDL==None:
+        # Create display lists for ellipse in case none was created before
+        shape.ellipseFillDL = glGenLists (1)
+        glNewList(shape.ellipseFillDL, GL_COMPILE)
+        gluDisk(shape.quadric,0,0.5,shape.ellipseDetail,1)
+        glEndList();
+        shape.ellipseStrokeDL = glGenLists (1)
+        glNewList(shape.ellipseStrokeDL, GL_COMPILE)
+        gluDisk(shape.quadric,0.5,0.5,shape.ellipseDetail,1)
+        glEndList();        
     npts = 100 # a reasonable sampling
     if attrib.ellipseMode==CENTER:
         x -= width/2
@@ -57,14 +64,14 @@ def ellipse(x,y,width,height):
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
-        gluDisk(shape.quadric,0,0.5,npts,1)
+        glCallList(shape.ellipseFillDL)
         _smoothFixHackEnd()
     glPushAttrib(GL_POLYGON_BIT)
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     glLineWidth (attrib.strokeWeight)
     if attrib.strokeColor != None:
         glColor4f(*attrib.strokeColor)
-        gluDisk(shape.quadric,0.5,0.5,npts,1)
+        glCallList(shape.ellipseStrokeDL)
     glPopAttrib()    
     glPopMatrix()
 

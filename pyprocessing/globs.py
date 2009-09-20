@@ -75,10 +75,13 @@ class shape:
     """Attributes for shapes."""
     quadric = gl.gluNewQuadric()
     tess = gl.gluNewTess()
+    ellipseFillDL = None
+    ellipseStrokeDL = None
     type = None
     sphereDetail = (20,10)
     bezierDetail = 20
     curveDetail = 20
+    ellipseDetail = 100
     tension = 0.5
     bezierBlend = []
     vtx = []

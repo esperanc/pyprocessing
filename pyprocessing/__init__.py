@@ -222,21 +222,26 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         sizey = max(120,ny)
         canvas.margin = (sizex-nx, sizey-ny)
     if multisample: 
-        canvas.config = Config(sample_buffers=1,samples=4,alpha_size=8,double_buffer=True)
+        canvas.config = Config(sample_buffers=1,samples=4,depth_size=24,double_buffer=True)
     else: 
-        canvas.config = Config(double_buffer=True) # a sane default, hopefully
+        canvas.config = Config(depth_size=24,double_buffer=True) # a sane default, hopefully
     try:
         # Try and create a window with the requested config
-        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, fullscreen=fullscreen,
+        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable,
+                        fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException, msg:
         print "No suitable context:",msg,"\nGenerating a default context."
-        # Fall back default config for older hardware
+        # Fall back to a minimalistic config for older hardware
+        canvas.config = Config(double_buffer=False,depth_size=16)
         canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, caption=caption, 
-                        fullscreen=fullscreen, visible = False)
+                        fullscreen=fullscreen, 
+                        config = canvas.config,
+                        visible = False)
         # turn on the fix that prevents trying to antialias polygons
         config.smoothFixHack = True
 
+    canvas.window.clear()
     # set the width and height global variables
     __builtin__.width = nx
     __builtin__.height = ny
@@ -261,7 +266,7 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (c_float * 4) (0,0,0,1))
     specular(0)
     ambient(0.2*255)
-    shininess(1)
+    shininess(10)
     # set up colors
     fill(255)
     stroke(0)
