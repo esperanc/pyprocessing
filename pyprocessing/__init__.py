@@ -192,7 +192,7 @@ def frameRate(rate):
     """Sets the frame rate."""        
     frame.targetRate = rate
     if frame.loop: loop()    
-
+        
 def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
          multisample=True):
     """Inits graphics screen with nx x ny pixels.
@@ -231,13 +231,36 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
                         fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = False)
     except pyglet.window.NoSuchConfigException, msg:
-        print "No suitable context:",msg,"\nGenerating a default context."
         # Fall back to a minimalistic config for older hardware
-        canvas.config = Config(double_buffer=False,depth_size=16)
+        print "No suitable context:",msg,"\nGenerating a default context."
+        #
+        # Use single buffering. This was the only way I could make it
+        # work with the Intel 945 express chipset under MS Windows
+        # (it worked fine with the Intel driver in Ubuntu 9.04). 
+        # I presume then that this is necessary for old or cheap hardware
+        # which do not copy the back buffer to the front buffer, but rather
+        # just flips between the two. Other than this, we should use FBOs 
+        # and try to render to texture.
+        #
+        # Also notice that in this case, the window must be mapped onto 
+        # the screen immediately (visible = True).
+        display = pyglet.window.get_platform().get_default_display()
+        screen = display.get_screens()[0]
+        canvas.config = None
+        for template_config in [
+            Config(double_buffer=False, depth_size=24),
+            Config(double_buffer=False, depth_size=16)]:
+            try:
+                canvas.config = screen.get_best_config(template_config)
+                break
+            except NoSuchConfigException:
+                pass
+        if canvas.config == None:
+            raise NoSuchConfigException
         canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, caption=caption, 
                         fullscreen=fullscreen, 
                         config = canvas.config,
-                        visible = False)
+                        visible = True)
         # turn on the fix that prevents trying to antialias polygons
         config.smoothFixHack = True
 
