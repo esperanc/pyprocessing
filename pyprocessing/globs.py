@@ -94,7 +94,12 @@ class config:
     coordInversionHack = True 
     # try to get around the artifacts when drawing filled polygons in smooth mode
     smoothFixHack = False # off by default 
-    smoothTurnedOn = False # tells whether smooth was on before the hack
+    smoothTurnedOn = False # Used internally to tell whether smooth was on
+    # flipping policy
+    flipPolicy = 'DOUBLE' # this is the default and should work for modern boards/drivers
+    # flipPolicy = 'SINGLE' # use this for Intel 945 under Windows or other cheap boards
+    # flipPolicy = 'FBO' # use this for modern boards/drivers where flip uses swap and not copy
+    # flipPolocy = 'ACCUM' # use this for cheap boards where 'SINGLE' produces too much flickering
     
 class callback:
     """Call back functions."""
