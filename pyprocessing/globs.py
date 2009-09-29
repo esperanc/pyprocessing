@@ -96,10 +96,10 @@ class config:
     smoothFixHack = False # off by default 
     smoothTurnedOn = False # Used internally to tell whether smooth was on
     # flipping policy
-    flipPolicy = 'DOUBLE' # this is the default and should work for modern boards/drivers
-    # flipPolicy = 'SINGLE' # use this for Intel 945 under Windows or other cheap boards
-    # flipPolicy = 'FBO' # use this for modern boards/drivers where flip uses swap and not copy
-    # flipPolocy = 'ACCUM' # use this for cheap boards where 'SINGLE' produces too much flickering
+    flipPolicy = DOUBLE_FLIP_POLICY # this is the default and should work for modern boards/drivers
+    # flipPolicy = SINGLE_FLIP_POLICY # use this for Intel 945 under Windows or other cheap boards
+    # flipPolicy = FBO_FLIP_POLICY # use this for modern boards/drivers where flip uses swap and not copy
+    # flipPolocy = ACCUM_FLIP_POLICY # use this for cheap boards where 'SINGLE' produces too much flickering
     
 class callback:
     """Call back functions."""

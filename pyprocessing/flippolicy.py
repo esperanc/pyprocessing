@@ -40,10 +40,22 @@ this is to use the accumulation buffer, which can be copied from/to with a
 single glAccum instruction. The AccumWindow implements this policy.
 
 The default flipping policy is governed by appropriate calls to the
-hint() functin just before calling size(). You might wish to change the defa
+hint() function just before calling size(). You might wish to change the default
+by editting the config variable in the globs submodule.
 """
 
-PyprocessingWindow = pyglet.window.Window
+import pyglet
+from pyglet.gl import *
+from fbo import FBO
+
+__all__=['PyprocessingWindow','FBOWindow','SingleBufferWindow','AccumWindow']
+
+
+class PyprocessingWindow (pyglet.window.Window):
+    """This is just a wrapper for the pyglet window class. If any 
+    window method or attribute should be messed with for all of pyprocessing's
+    window classes, it's best to do it here."""
+    pass
 
 class FBOWindow(PyprocessingWindow):
     """This is a pyglet window where drawing in fact occurs inside an FBO.

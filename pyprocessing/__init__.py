@@ -32,6 +32,7 @@ from shapes import *
 from fonts import *
 from transformations import *
 from mathfunctions import *
+from flippolicy import *
 
 # We infringe good Python practice here by polluting the
 # __builtin__ namespace with global symbols width and height,
@@ -177,7 +178,7 @@ def loop():
     """Enables the periodical refresh of the screen."""
     frame.loop = True
     pyglet.clock.unschedule(__draw)
-    pyglet.clock.schedule(__draw,1.0/frame.targetRate)
+    pyglet.clock.schedule_interval(__draw,1.0/frame.targetRate)
     
 def noLoop():
     """Disables the periodical refresh of the screen."""
@@ -225,43 +226,41 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         canvas.config = Config(sample_buffers=1,samples=4,depth_size=24,double_buffer=True)
     else: 
         canvas.config = Config(depth_size=24,double_buffer=True) # a sane default, hopefully
+        
+    # select the proper window class depending on the flippolicy
+    windowClass = { DOUBLE_FLIP_POLICY:PyprocessingWindow,
+                    SINGLE_FLIP_POLICY:SingleBufferWindow,
+                    FBO_FLIP_POLICY:FBOWindow,
+                    ACCUM_FLIP_POLICY:AccumWindow }[config.flipPolicy]
+    #
+    # If single buffering is used, the window must be mapped onto 
+    # the screen immediately (visible = True).
+    #
+    isVisible = config.flipPolicy == SINGLE_FLIP_POLICY
     try:
         # Try and create a window with the requested config
-        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable,
+        canvas.window = windowClass(sizex, sizey, resizable=resizable,
                         fullscreen=fullscreen,
-                        config=canvas.config, caption=caption, visible = False)
+                        config=canvas.config, caption=caption, visible = isVisible)
     except pyglet.window.NoSuchConfigException, msg:
         # Fall back to a minimalistic config for older hardware
         print "No suitable context:",msg,"\nGenerating a default context."
-        #
-        # Use single buffering. This was the only way I could make it
-        # work with the Intel 945 express chipset under MS Windows
-        # (it worked fine with the Intel driver in Ubuntu 9.04). 
-        # I presume then that this is necessary for old or cheap hardware
-        # which do not copy the back buffer to the front buffer, but rather
-        # just flips between the two. Other than this, we should use FBOs 
-        # and try to render to texture.
-        #
-        # Also notice that in this case, the window must be mapped onto 
-        # the screen immediately (visible = True).
         display = pyglet.window.get_platform().get_default_display()
         screen = display.get_screens()[0]
         canvas.config = None
         for template_config in [
-            Config(double_buffer=False, depth_size=24),
-            Config(double_buffer=False, depth_size=16)]:
+            Config(depth_size=24),
+            Config(depth_size=16)]:
             try:
                 canvas.config = screen.get_best_config(template_config)
                 break
             except NoSuchConfigException:
                 pass
-        if canvas.config == None:
-            raise NoSuchConfigException
-        canvas.window = pyglet.window.Window(sizex, sizey, resizable=resizable, caption=caption, 
-                        fullscreen=fullscreen, 
-                        config = canvas.config,
-                        visible = True)
-        # turn on the fix that prevents trying to antialias polygons
+        if canvas.config == None: raise NoSuchConfigException
+        canvas.window = windowClass(sizex, sizey, resizable=resizable, caption=caption, 
+                                    fullscreen=fullscreen, config = canvas.config,
+                                    visible = isVisible)
+        # turn on the fix that prevents polygon antialiasing
         config.smoothFixHack = True
 
     canvas.window.clear()

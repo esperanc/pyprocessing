@@ -58,8 +58,14 @@ def rectMode(mode):
     attrib.rectMode = mode
     
 def hint(hintconst):
-    """Sets/unsets configuration settings. At present, only depth testing
-    can be set or unset using constants DISABLE_DEPTH_TEST and ENABLE_DEPTH_TEST."""
+    """Sets/unsets configuration settings. 
+    * Depth testing can be set or unset using constants DISABLE_DEPTH_TEST and 
+      ENABLE_DEPTH_TEST (default=ON).
+    * Polygon antialiasing can be turned on or off using ENABLE_POLYGON_SMOOTH 
+      and DISABLE_POLYGON_SMOOTH (default=OFF).
+    * Flip policy can be selected using the constants DOUBLE_FLIP_POLICY, 
+      SINGLE_FLIP_POLICY, FBO_FLIP_POLICY and ACCUM_FLIP_POLICY
+    """
     if hintconst==ENABLE_DEPTH_TEST:
         attrib.depthTest = True
         glDepthFunc(GL_LEQUAL)
@@ -67,3 +73,9 @@ def hint(hintconst):
     elif hintconst==DISABLE_DEPTH_TEST:
         attrib.depthTest = False
         glDisable(GL_DEPTH_TEST)
+    elif hintconst in (DOUBLE_FLIP_POLICY,SINGLE_FLIP_POLICY,
+        FBO_FLIP_POLICY, ACCUM_FLIP_POLICY):
+        config.flipPolicy=hintconst
+    else:
+        raise ValueError,"Unknown hint"
+
