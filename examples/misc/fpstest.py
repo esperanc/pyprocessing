@@ -6,7 +6,7 @@ nballs = 100
 balls = []
 
 def setup():
-    hint('ACCUM_FLIP_POLICY')
+    hint('DOUBLE_FLIP_POLICY')
     size(400,400)
     smooth()
     noStroke()
@@ -26,7 +26,7 @@ def setup():
         r = random()*20+4
         # color
         c = color(random(),random()*0.5+0.5,random()*0.5+0.5)
-        balls.append((x,y,dx,dy,r,c))
+        balls.append([x,y,dx,dy,r,c])
     colorMode(RGB,256)
 
 def draw():
@@ -34,20 +34,15 @@ def draw():
     fill(255,50)
     rect(0,0,width,height)
     # draw/bounce balls
-    for i in range(len(balls)):
-        x,y,dx,dy,r,c = balls[i]
+    for i,(x,y,dx,dy,r,c) in enumerate(balls):
         fill(c)        
         x += dx
         newx = constrain(x,r,width-r)
-        if newx != x: 
-           dx = -dx
-           x = newx
+        if newx != x: dx,x = -dx,newx
         y += dy
         newy = constrain(y,r,height-r)
-        if newy != y: 
-            dy = -dy
-            y = newy
-        balls[i] = x,y,dx,dy,r,c
+        if newy != y: dy,y = -dy,newy
+        balls[i][0:4] = x,y,dx,dy
         ellipse(x,y,r,r)
     fill(0)
     text("%3d"%frame.rate,0,20)

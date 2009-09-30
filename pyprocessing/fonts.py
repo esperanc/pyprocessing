@@ -7,7 +7,8 @@ from pyglet.gl import *
 from globs import *
 from constants import *
 
-__all__=['textAlign', 'createFont', 'textFont', 'htmlText', 'text']
+__all__=['textAlign', 'createFont', 'textFont', 'htmlText', 'text',
+         'textSize', 'textWidth', 'textAscent', 'textDescent']
 
 def textAlign (align,yalign=BASELINE):
     """Set the text alignment attributes."""
@@ -16,11 +17,45 @@ def textAlign (align,yalign=BASELINE):
 def createFont(family = None, size = 16, bold=False, italic=False):
     """Creates a font for subsequent use"""
     return {"font_name":family, "font_size":size, "bold":bold, "italic":italic }
+
+def textSize(size):
+    """Changes the size of the current font to 'size' (in pixels)"""
+    attrib.font['font_size'] = size
     
 def textFont (font):
     """Set font as current font. Should be object created with createFont"""
     attrib.font = font
-    
+
+def textWidth (data):
+    """Returns the estimated width in pixels of the string 'data' rendered 
+    in the current font"""
+    label = pyglet.text.Label(data,
+                          x=0, y=0, 
+                          anchor_x=textAlignConst[attrib.textAlign[0]],
+                          anchor_y=textAlignConst[attrib.textAlign[1]],
+                          **attrib.font)
+    return label.content_width
+
+def textAscent ():
+    """Returns the ascent of the current font, i.e., the height starting
+    from the baseline."""
+    fontspec = {'name':attrib.font.get('font_name', None),
+                'size':attrib.font.get('font_size', None),
+                'italic':attrib.font.get('italic', False),
+                'bold':attrib.font.get('bold', False)}
+    font = pyglet.font.load(**fontspec)
+    return font.ascent
+
+def textDescent ():
+    """Returns the descent of the current font, i.e., the vertical size
+    below the baseline."""
+    fontspec = {'name':attrib.font.get('font_name', None),
+                'size':attrib.font.get('font_size', None),
+                'italic':attrib.font.get('italic', False),
+                'bold':attrib.font.get('bold', False)}
+    font = pyglet.font.load(**fontspec)
+    return -font.descent
+
 def htmlText(string, x, y, z = 0):
     """Draws the html text at x,y,z"""
     if attrib.fillColor != None:
