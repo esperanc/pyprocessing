@@ -7,7 +7,7 @@ from constants import *
 from pyglet.gl import *
 from colors import _getColor
 
-__all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 
+__all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 'tint', 'noTint',
          'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'hint']
          
 def stroke(*color):
@@ -25,6 +25,14 @@ def strokeWeight (weight):
 def fill(*color):
     """Sets color as color for drawing filled shapes."""
     attrib.fillColor = _getColor(*color)
+
+def tint(*color):
+    """Sets color as a tint for drawing images."""
+    attrib.tintColor = _getColor(*color)
+    
+def noTint():
+    """Undefines tint for drawing images."""
+    attrib.tintColor = None
 
 def noFill():
     """Omits filled drawings"""

@@ -46,6 +46,7 @@ class attrib:
     """Drawing attributes"""
     strokeColor = (0,0,0,1)
     fillColor = (1,1,1,1)
+    tintColor = None
     strokeWeight = 1
     font = {}
     location = pyglet.resource.FileLocation(os.path.dirname(__file__))

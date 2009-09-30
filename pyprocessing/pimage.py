@@ -115,6 +115,10 @@ def image(img, x, y, width=None, height=None):
     sprite = pyglet.sprite.Sprite(img.img)
     sprite.x = x
     sprite.y = y
+    if attrib.tintColor != None:
+        r,g,b,a = attrib.tintColor
+        sprite.color = (int(r*255),int(g*255),int(b*255))
+        sprite.opacity = int(a*255)
     glPushMatrix()
     if width != None: 
         scalex = width*1.0/img.width
