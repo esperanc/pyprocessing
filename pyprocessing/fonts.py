@@ -1,5 +1,5 @@
 #************************
-#  FONT STUFF 
+#  FONT/TEXT STUFF 
 #************************
 
 import pyglet
@@ -75,14 +75,35 @@ def htmlText(string, x, y, z = 0):
         else:
             label.draw()
 
-def text(string, x, y, z = 0):
-    """Draws the html text at x,y,z"""
+def text(string, x, y, *args):
+    """Draws text at x,y. Argument list is of the form:
+    text(string,x,y)
+    text(string,x,y,z)
+    text(string,x,y,width,height)
+    text(string,x,y,width,height,z)
+    """
+    # Obtain z coordinate
+    if len(args) == 1:
+        z = args[0]
+    elif len(args)== 3:
+        z = args[2]
+    else:
+        z = 0
+    # Obtain width and height
+    if len(args)>1:
+        w,h = args[0],args[1]
+    else:
+        w,h = width,height
+    #
     if attrib.fillColor != None:
         r,g,b,a=[int (c*255) for c in attrib.fillColor]
+        glPushMatrix()
+        glTranslatef(0,0,z)
         label = pyglet.text.Label(string,
                           x=x, y=y, color=(r,g,b,a),
                           anchor_x=textAlignConst[attrib.textAlign[0]],
                           anchor_y=textAlignConst[attrib.textAlign[1]],
+                          multiline=True,width=w,height=h,
                           **attrib.font)
         if config.coordInversionHack:
             glPushMatrix()
@@ -92,4 +113,4 @@ def text(string, x, y, z = 0):
             glPopMatrix()
         else:
             label.draw()
-
+        glPopMatrix()

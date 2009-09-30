@@ -2,10 +2,11 @@ import pyglet
 from pyglet.gl import *
 from globs import *
 from constants import *
+import ctypes
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'save']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save']
 
 # the PImage class
 
@@ -51,6 +52,10 @@ class PImage (object):
     def updatePixels(self):
         """Saves the pixel data."""
         self.img.get_image_data().set_data('BGRA',-self.width*4,self.buf)
+        
+    def set(self, x, y, color):
+        """Sets the pixel at x,y with the given color."""
+        self.pixels [y*self.width+x] = color
         
     def get(self, *args):
         """Returns a copy, a part or a pixel of this image.
@@ -146,6 +151,26 @@ def get(*args):
         x,y = args
         return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y)
 
+
+def setScreen (x,y,data):
+    """Sets the position x,y of the screen with data, which can be a color or
+    a PImage.
+    Important: this function is equivalent to Processing's 'set' function. 
+    Python, however, uses the 'set' identifier to refer to the set data type. 
+    """
+    
+    if isinstance (data,PImage):
+        image(data,x,y)
+    else:
+        glRasterPos2i(x,y)
+        buf = (ctypes.c_uint)(data)
+        glDrawPixels(1,
+                     1,
+ 	                 GL_BGRA, 
+ 	                 GL_UNSIGNED_BYTE, 
+ 	                 byref(buf))
+        
+    
 def save(filename):
     """Saves the canvas into a file. Note that only .png images are supported by
     pyglet unless PIL is also installed."""
