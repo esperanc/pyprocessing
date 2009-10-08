@@ -236,7 +236,7 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
     # If single buffering is used, the window must be mapped onto 
     # the screen immediately (visible = True).
     #
-    isVisible = config.flipPolicy == SINGLE_FLIP_POLICY
+    isVisible = config.flipPolicy in (SINGLE_FLIP_POLICY,ACCUM_FLIP_POLICY)
     try:
         # Try and create a window with the requested config
         canvas.window = windowClass(sizex, sizey, resizable=resizable,
@@ -249,8 +249,8 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         screen = display.get_screens()[0]
         canvas.config = None
         for template_config in [
-            Config(depth_size=24),
-            Config(depth_size=16)]:
+            Config(depth_size=24, double_buffer = True),
+            Config(depth_size=16, double_buffer = True)]:
             try:
                 canvas.config = screen.get_best_config(template_config)
                 break

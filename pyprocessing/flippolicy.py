@@ -132,7 +132,7 @@ class SingleBufferWindow(PyprocessingWindow):
         config.double_buffer = False
         keyargs['config'] = config
         super(SingleBufferWindow, self).__init__(*args, **keyargs)
-        
+         
         
 class AccumWindow(PyprocessingWindow):
     """This is a pyglet window for which an accumulation buffer is defined.
@@ -159,7 +159,7 @@ class AccumWindow(PyprocessingWindow):
     def flip(self):
         """Override the flip method."""
         # copy from the the back buffer to the accumulation buffer
-        glAccum(GL_LOAD, 1)
+        glAccum(GL_LOAD, 1.0)
         # do the actual flip
         super (AccumWindow, self).flip()
         # copy the accum buffer to the back buffer

@@ -1,6 +1,7 @@
 from pyprocessing import *
 
 size(300,300)
+hint(DISABLE_DEPTH_TEST)
 smooth()
 
 l = []
