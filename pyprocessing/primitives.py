@@ -34,6 +34,8 @@ def background(*color):
     
 def ellipse(x,y,width,height):
     """Draws an ellipse with lower left corner at (x,y) and size (width,height)"""
+    if shape.quadric == None:
+        shape.quadric = gl.gluNewQuadric()
     if shape.ellipseFillDL==None:
         # Create display lists for ellipse in case none was created before
         shape.ellipseFillDL = glGenLists (1)
@@ -100,6 +102,8 @@ def arc(x,y,width,height, start, stop):
     sweep = math.degrees(stop-start)
     start = math.degrees(start)+90
     npts = max(5,int(abs(sweep)))
+    if shape.quadric == None:
+        shape.quadric = gl.gluNewQuadric()
     if attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
@@ -263,6 +267,8 @@ def box(*args):
 def sphere(radius):
     """Draws a sphere centered at the origin with the given radius."""
     glPushAttrib(GL_POLYGON_BIT)
+    if shape.quadric == None:
+        shape.quadric = gl.gluNewQuadric()
     if attrib.fillColor!=None:
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL)
         glEnable(GL_POLYGON_OFFSET_FILL)

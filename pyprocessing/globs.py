@@ -74,7 +74,7 @@ class frame:
     
 class shape:
     """Attributes for shapes."""
-    quadric = gl.gluNewQuadric()
+    quadric = None
     tess = gl.gluNewTess()
     ellipseFillDL = None
     ellipseStrokeDL = None
