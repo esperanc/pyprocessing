@@ -287,9 +287,11 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
             try:
                 canvas.config = screen.get_best_config(template_config)
                 break
-            except NoSuchConfigException:
+            except pyglet.window.NoSuchConfigException:
                 pass
-        if canvas.config == None: raise NoSuchConfigException
+        if canvas.config == None: 
+            raise pyglet.window.NoSuchConfigException,\
+            "Sorry, but it seems your hardware does not support any usable OpenGL config"
         canvas.window = windowClass(sizex, sizey, resizable=resizable, caption=caption, 
                                     fullscreen=fullscreen, config = canvas.config,
                                     visible = isVisible)
