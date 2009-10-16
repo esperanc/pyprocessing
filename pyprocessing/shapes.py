@@ -72,6 +72,9 @@ def endShape(close=False):
         # Draw filled shape
         if shape.type==None:
             _smoothFixHackBegin()
+            # first create a tesselator object if none was defined yet
+            if shape.tess == None: shape.tess = gl.gluNewTess()
+            # set up the tesselator callbacks
             gluTessCallback(shape.tess, GLU_TESS_VERTEX, ctypes.cast(glVertex3dv,ctypes.CFUNCTYPE(None)))
             gluTessCallback(shape.tess, GLU_TESS_BEGIN, ctypes.cast(glBegin,ctypes.CFUNCTYPE(None)))
             gluTessCallback(shape.tess, GLU_TESS_END, ctypes.cast(glEnd,ctypes.CFUNCTYPE(None)))

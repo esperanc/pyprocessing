@@ -75,12 +75,12 @@ class frame:
 class shape:
     """Attributes for shapes."""
     quadric = None
-    tess = gl.gluNewTess()
+    tess = None
     ellipseFillDL = None
     ellipseStrokeDL = None
     type = None
     sphereDetail = (20,10)
-    bezierDetail = 20
+    bezierDetail = 40
     curveDetail = 20
     ellipseDetail = 100
     tension = 0.5
@@ -100,7 +100,7 @@ class config:
     flipPolicy = DOUBLE_FLIP_POLICY # this is the default and should work for modern boards/drivers
     # flipPolicy = SINGLE_FLIP_POLICY # use this for Intel 945 under Windows or other cheap boards
     # flipPolicy = FBO_FLIP_POLICY # use this for modern boards/drivers where flip uses swap and not copy
-    # flipPolocy = ACCUM_FLIP_POLICY # use this for cheap boards where 'SINGLE' produces too much flickering
+    # flipPolicy = ACCUM_FLIP_POLICY # use this for cheap boards where 'SINGLE' produces too much flickering
     
 class callback:
     """Call back functions."""
