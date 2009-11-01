@@ -20,7 +20,7 @@ so is pyprocessing.
 # MAKE SURE THE VERSION BELOW IS THE SAME AS THAT IN CONSTANTS.PY!
 
 setup(name='pyprocessing',
-      version='0.1.1',
+      version='0.1.2',
       description='A Processing-like environment for Python',
       long_description=long_description,
       author='Claudio Esperança',
