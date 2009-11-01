@@ -66,6 +66,7 @@ from fonts import *
 from transformations import *
 from mathfunctions import *
 from flippolicy import *
+import config
 
 # We infringe good Python practice here by polluting the
 # __builtin__ namespace with global symbols width and height,
@@ -228,7 +229,7 @@ def frameRate(rate):
     if frame.loop: loop()    
         
 def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
-         multisample=True):
+         multisample=config.multisample):
     """Inits graphics screen with nx x ny pixels.
     Caption is the window title."""
     # Set up canvas

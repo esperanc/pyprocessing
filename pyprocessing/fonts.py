@@ -6,6 +6,7 @@ import pyglet
 from pyglet.gl import *
 from globs import *
 from constants import *
+import config
 
 __all__=['textAlign', 'createFont', 'textFont', 'htmlText', 'text',
          'textSize', 'textWidth', 'textAscent', 'textDescent']
@@ -22,9 +23,10 @@ def textSize(size):
     """Changes the size of the current font to 'size' (in pixels)"""
     attrib.font['font_size'] = size
     
-def textFont (font):
+def textFont (font, size=None):
     """Set font as current font. Should be object created with createFont"""
     attrib.font = font
+    if size!=None: attrib.font['font_size'] = size
 
 def textWidth (data):
     """Returns the estimated width in pixels of the string 'data' rendered 
@@ -82,6 +84,10 @@ def text(string, x, y, *args):
     text(string,x,y,width,height)
     text(string,x,y,width,height,z)
     """
+    # Do nothing if no fill color is defined
+    if attrib.fillColor == None: return
+    # get color
+    r,g,b,a=[int (c*255) for c in attrib.fillColor]
     # Obtain z coordinate
     if len(args) == 1:
         z = args[0]
@@ -89,28 +95,37 @@ def text(string, x, y, *args):
         z = args[2]
     else:
         z = 0
+    # create a label object
+    label = pyglet.text.Label(string,
+                  x=x, y=y, color=(r,g,b,a),
+                  anchor_x=textAlignConst[attrib.textAlign[0]],
+                  anchor_y=textAlignConst[attrib.textAlign[1]],
+                  **attrib.font)
     # Obtain width and height
     if len(args)>1:
-        w,h = args[0],args[1]
+        label.width, label.height = args[0],args[1]
+        label.multiline = True
     else:
-        w,h = width,height
-    #
-    if attrib.fillColor != None:
-        r,g,b,a=[int (c*255) for c in attrib.fillColor]
+        # see if the string has newlines
+        s = string.split('\n')
+        if len(s)>1:
+            # Now follows a horribly inadequate way of figuring out
+            # a reasonable value for the width property of the label
+            w = 0
+            for line in s:
+                w = max(w,textWidth(line))
+            label.width = w
+            print w
+            label.multiline=True
+    
+    glPushMatrix()
+    glTranslatef(0,0,z)
+    if config.coordInversionHack:
         glPushMatrix()
-        glTranslatef(0,0,z)
-        label = pyglet.text.Label(string,
-                          x=x, y=y, color=(r,g,b,a),
-                          anchor_x=textAlignConst[attrib.textAlign[0]],
-                          anchor_y=textAlignConst[attrib.textAlign[1]],
-                          multiline=True,width=w,height=h,
-                          **attrib.font)
-        if config.coordInversionHack:
-            glPushMatrix()
-            glTranslatef(0,y*2,0)
-            glScalef(1,-1,1)
-            label.draw()
-            glPopMatrix()
-        else:
-            label.draw()
+        glTranslatef(0,y*2,0)
+        glScalef(1,-1,1)
+        label.draw()
         glPopMatrix()
+    else:
+        label.draw()
+    glPopMatrix()

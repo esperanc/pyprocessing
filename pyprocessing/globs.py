@@ -2,7 +2,7 @@ from constants import *
 import pyglet,os
 
 __all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'canvas', 'shape', 
-           'screen', 'config', 'callback']
+           'screen', 'callback']
 
 #************************
 #  GLOBALS
@@ -87,20 +87,6 @@ class shape:
     bezierBlend = []
     vtx = []
     nrm = []
-
-class config:
-    """Configuration variables for the library."""
-    # whether or not to invert the y axis. This requires fixing the drawing of 
-    # some primitives such as arc or text
-    coordInversionHack = True 
-    # try to get around the artifacts when drawing filled polygons in smooth mode
-    smoothFixHack = False # off by default 
-    smoothTurnedOn = False # Used internally to tell whether smooth was on
-    # flipping policy
-    flipPolicy = DOUBLE_FLIP_POLICY # this is the default and should work for modern boards/drivers
-    # flipPolicy = SINGLE_FLIP_POLICY # use this for Intel 945 under Windows or other cheap boards
-    # flipPolicy = FBO_FLIP_POLICY # use this for modern boards/drivers where flip uses swap and not copy
-    # flipPolicy = ACCUM_FLIP_POLICY # use this for cheap boards where 'SINGLE' produces too much flickering
     
 class callback:
     """Call back functions."""

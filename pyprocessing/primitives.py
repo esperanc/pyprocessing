@@ -8,6 +8,7 @@ from globs import *
 from constants import *
 from attribs import *
 from colors import _getColor
+import config
 
 __all__=['_smoothFixHackBegin', '_smoothFixHackEnd',
          'background', 'ellipse', 'arc', 'rect', 'quad',

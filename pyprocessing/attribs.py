@@ -6,6 +6,7 @@ from globs import *
 from constants import *
 from pyglet.gl import *
 from colors import _getColor
+import config
 
 __all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 'tint', 'noTint',
          'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'hint']

@@ -2,6 +2,7 @@ import pyglet
 from pyglet.gl import *
 from globs import *
 from constants import *
+import config
 import ctypes
 
 # exports

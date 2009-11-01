@@ -7,6 +7,7 @@ from pyglet.gl import *
 from globs import *
 from constants import *
 from math import *
+import config
 
 __all__=['pushMatrix', 'popMatrix', 'resetMatrix', 'applyMatrix', 'getMatrix',
          'printMatrix', 'getProjection', 'printProjection',
@@ -94,8 +95,9 @@ def camera (*args):
     
     if len(args)==0:
         # default camera
-        # Add a half-pixel shift in order to obtain sharper lines
-        glTranslatef(0.5,0.5,0)
+        if config.halfPixelShiftHack:
+            # Add a half-pixel shift in order to obtain sharper lines
+            glTranslatef(0.5,0.5,0)
         gluLookAt (width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), 
                    width/2.0, height/2.0, 0, 0, 1, 0)
     else:
