@@ -85,7 +85,7 @@ class PImage (object):
             # result is a pixel
             x,y = args
             assert(x>=0 and x<self.width and y>=0 and y<self.height)
-            return self.pixels[y*self.width+height]
+            return self.pixels[y*self.width+x]
     
     def save(self,filename):
         """Saves this image as a file of the proper format."""
