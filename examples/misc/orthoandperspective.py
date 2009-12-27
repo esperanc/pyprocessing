@@ -1,20 +1,19 @@
 from pyprocessing import *
 
 def setup():
-  size(100, 100)
+  size(200, 100, resizable=True)
 
 def draw():
-  noFill();
-  background(200);
-  if (mouse.pressed):
-     camera(0,0,0,0,0,-1,0,1,0)
-     ortho(0,width,0,height,-height,height)
-  else:
-     camera()
-     perspective()
-  translate(50, 50, 0);
-  rotateX(-PI/6);
-  rotateY(PI/3);
-  box(45);
+  lights()
+  # First camera
+  glViewport (0,0,width/2,height)
+  background (200)
+  glMatrixMode (GL_MODELVIEW)
+  glLoadIdentity()
+  gluLookAt (-3, 0, 100, 0, 0, 0, 0, 1, 0)
+  glMatrixMode (GL_PROJECTION)
+  gluPerspective (60,float(height)
+  box(45)
+  
 
 run()
