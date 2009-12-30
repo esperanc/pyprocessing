@@ -174,6 +174,9 @@ def on_resize(w, h):
         canvas.margin = mx,my = 0,0
         __builtin__.width = w
         __builtin__.height = h
+    # Remember window size if fullscreen
+    if canvas.window.fullscreen:
+        __builtin__.width,__builtin__.height=screen.width,screen.height
     # Set up a reasonable perspective view
     glViewport(mx/2, my/2, width, height)
     perspective()
@@ -253,8 +256,8 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         sizex,sizey = None,None
         canvas.margin = (0,0)
     else:
-        sizex = max(120,nx)
-        sizey = max(120,ny)
+        sizex = max(120,int(nx))
+        sizey = max(120,int(ny))
         canvas.margin = (sizex-nx, sizey-ny)
     if multisample: 
         canvas.config = Config(sample_buffers=1,samples=4,depth_size=24,double_buffer=True)

@@ -60,6 +60,9 @@ class FBO(object):
         # Check if it worked so far
         status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT)
         assert(status == GL_FRAMEBUFFER_COMPLETE_EXT)
+        
+        # Release framebuffer
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
 
     def attach(self):
         """Call this before rendering to the FBO."""

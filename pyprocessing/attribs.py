@@ -21,6 +21,7 @@ def noStroke():
       
 def strokeWeight (weight):
     """Sets line width for drawing outline objects"""
+    if weight<=0: weight=0.001
     attrib.strokeWeight = weight
     
 def fill(*color):
