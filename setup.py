@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-from distutils.core import setup
+import ez_setup
+ez_setup.use_setuptools()
+
+from setuptools import setup, find_packages
 from pyprocessing import constants
 
 long_description = '''
@@ -24,7 +27,7 @@ setup(name='pyprocessing',
       version=constants.version,
       description='A Processing-like environment for Python',
       long_description=long_description,
-      author='Claudio Esperança',
+      author='Claudio Esperanca',
       author_email='claudio.esperanca@gmail.com',
       url='http://code.google.com/p/pyprocessing/',
       license='BSD',

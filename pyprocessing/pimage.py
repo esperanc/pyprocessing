@@ -124,6 +124,8 @@ def image(img, x, y, width=None, height=None):
     if width != None: 
         scalex = width*1.0/img.width
         scaley = height*1.0/img.height
+        sprite.x /= scalex
+        sprite.y /= scaley
     else:
         scalex,scaley = 1.0,1.0
     if config.coordInversionHack:

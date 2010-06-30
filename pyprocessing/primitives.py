@@ -47,7 +47,6 @@ def ellipse(x,y,width,height):
         glNewList(shape.ellipseStrokeDL, GL_COMPILE)
         gluDisk(shape.quadric,0.5,0.5,shape.ellipseDetail,1)
         glEndList();        
-    npts = 100 # a reasonable sampling
     if attrib.ellipseMode==CENTER:
         x -= width/2
         y -= height/2
@@ -195,8 +194,9 @@ def triangle(x0,y0,x1,y1,x2,y2):
 def point(x,y,z=0.0):
     """Draws a point at the given coordinates."""
     if attrib.strokeColor != None:
-        glBegin(GL_POINTS)
+        glPointSize (attrib.strokeWeight)
         glColor4f(*attrib.strokeColor)
+        glBegin(GL_POINTS)
         glVertex3f(x,y,z)
         glEnd()
         
@@ -229,31 +229,55 @@ def box(*args):
     """Draws a box centered on the origin. Arguments:
     (size) or 
     (sizex, sizey, sizez)"""
+    
+    def cubeFillList ():
+        "Creates a vertex list for drawing a unit cube in filled mode."
+        v = []
+        for x in -0.5,0.5: 
+            for y in -0.5,0.5:
+                for z in -0.5,0.5:
+                    v+=[(x,y,z)]
+        p,n = [],[] 
+        for f in (0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3):
+            for fv in f: p+=v[fv]
+        for fn in (-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1):
+            n += fn*4
+        return pyglet.graphics.vertex_list(24,('v3f', p),('n3f', n))
+
     n = len(args)
     assert(n==1 or n==3)
     if n==1:
         dx=dy=dz=args[0]/2.0
     else:
         dx,dy,dz=args[0]/2.0,args[1]/2.0,args[2]/2.0
-    v = []
-    for x in [-dx,dx]: 
-        for y in [-dy,dy]:
-            for z in [-dz,dz]:
-                v+=[(x,y,z)]
-    faces = [(0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3)]
-    normals = [(-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1)]
+#    v = []
+#    for x in [-dx,dx]: 
+#        for y in [-dy,dy]:
+#            for z in [-dz,dz]:
+#                v+=[(x,y,z)]
+#    faces = [(0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3)]
+#    normals = [(-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1)]
     glPushAttrib(GL_POLYGON_BIT)
     if attrib.fillColor!=None:
         glEnable(GL_POLYGON_OFFSET_FILL)
         glPolygonOffset(1,1)
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
-        glBegin(GL_QUADS)
-        for f,n in zip(faces,normals):
-            glNormal3f(*n)
-            for i in f:
-                glVertex3f(*v[i])
-        glEnd()
+        
+#        glBegin(GL_QUADS)
+#        for f,n in zip(faces,normals):
+#            glNormal3f(*n)
+#            for i in f:
+#                glVertex3f(*v[i])
+#        glEnd()
+
+        if shape.cubeFillVL == None: shape.cubeFillVL = cubeFillList()
+        # Assumes current matrix mode is ModelView
+        glPushMatrix()
+        glScalef(dx,dy,dz)
+        shape.cubeFillVL.draw(pyglet.gl.GL_QUADS)
+        glPopMatrix()
+        
         _smoothFixHackEnd()
         glDisable(GL_POLYGON_OFFSET_FILL)
     if attrib.strokeColor!=None:

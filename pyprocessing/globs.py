@@ -74,11 +74,13 @@ class frame:
     
 class shape:
     """Attributes for shapes."""
-    quadric = None
-    tess = None
-    ellipseFillDL = None
-    ellipseStrokeDL = None
-    type = None
+    quadric = None # Stores a gluQuadricObject
+    tess = None # Stores a gluTesselatorObject
+    ellipseFillDL = None # Stores a display list for a filled ellipse
+    ellipseStrokeDL = None # Stores a display list for an outline ellipse
+    cubeFillVL = None # Stores a vertex list for drawing a cube with quads
+    cubeStrokeVL = None # Stores a vertex list for drawing a cube with line segments
+    type = None # stores the type of the shape as passed to function beginShape
     sphereDetail = (20,10)
     bezierDetail = 40
     curveDetail = 20
