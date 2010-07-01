@@ -129,7 +129,7 @@ def image(img, x, y, width=None, height=None):
     else:
         scalex,scaley = 1.0,1.0
     if config.coordInversionHack:
-        glTranslatef(0,(y*2+sprite.height)*scaley,0)
+        glTranslatef(0,(sprite.y*2+sprite.height)*scaley,0)
         glScalef(scalex,-scaley,1)
     sprite.draw() 
     glPopMatrix()
