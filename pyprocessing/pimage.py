@@ -75,10 +75,14 @@ class PImage (object):
                    width>0 and height>0 and x+width<=self.width and 
                    y+height<=self.height)
             if width != self.width or height != self.height:
-                source = self.img.get_region(x,y,width,height)
+                source = self.img.get_region(x,self.height-y-height,width,height)
             else:
                 source = self.img
             result = PImage(width,height,self.img.format)
+#            print source._current_pitch
+#            print result.img._current_pitch
+#            buf = source.get_data ('BGRA',result.img._current_pitch)
+#            result.img.set_data ('BGRA', result.img._current_pitch, buf)
             result.img.get_texture().blit_into (source,0,0,0)
             return result
         else:

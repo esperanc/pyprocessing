@@ -22,8 +22,14 @@ class PVector(list):
         return PVector(*self)
     
     def __add__(self, v2):
-        """Returns a PVector which is a sum of this vector with vector v2."""
+        """Returns a PVector which is a sum of this vector with vector v2.
+        Notice that this overrides the common meaning of the + operator for
+        lists."""
         return PVector ([self [i]+v2[i] for i in range(3)])
+    
+    def __iadd__(self, v2):
+        """Must also override the += operator"""
+        self [:] = [self [i]+v2[i] for i in range(3)]
         
     def add(self,v2):
         """Adds vector v2 to this vector."""
