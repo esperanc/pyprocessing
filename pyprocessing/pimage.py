@@ -48,7 +48,7 @@ class PImage (object):
         """Gets the pixel data as an array of integers."""
         n = self.width*self.height
         self.buf = self.img.get_image_data().get_data('BGRA',-self.width*4)
-        self.pixels = cast(self.buf,POINTER(c_uint))
+        self.pixels = ctypes.cast(self.buf,ctypes.POINTER(ctypes.c_uint))
         
     def updatePixels(self):
         """Saves the pixel data."""

@@ -324,7 +324,7 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
     glEnable(GL_COLOR_MATERIAL)
     glEnable (GL_NORMALIZE)
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (c_float * 4) (0,0,0,1))
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (ctypes.c_float * 4)  (0,0,0,1))
     specular(0)
     ambient(0.2*255)
     shininess(10)

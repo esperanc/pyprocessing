@@ -250,26 +250,19 @@ def box(*args):
         dx=dy=dz=args[0]/2.0
     else:
         dx,dy,dz=args[0]/2.0,args[1]/2.0,args[2]/2.0
-#    v = []
-#    for x in [-dx,dx]: 
-#        for y in [-dy,dy]:
-#            for z in [-dz,dz]:
-#                v+=[(x,y,z)]
-#    faces = [(0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3)]
-#    normals = [(-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1)]
+    v = []
+    for x in [-dx,dx]: 
+        for y in [-dy,dy]:
+            for z in [-dz,dz]:
+                v+=[(x,y,z)]
+    faces = [(0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3)]
+    normals = [(-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1)]
     glPushAttrib(GL_POLYGON_BIT)
     if attrib.fillColor!=None:
         glEnable(GL_POLYGON_OFFSET_FILL)
         glPolygonOffset(1,1)
         glColor4f(*attrib.fillColor)
         _smoothFixHackBegin()
-        
-#        glBegin(GL_QUADS)
-#        for f,n in zip(faces,normals):
-#            glNormal3f(*n)
-#            for i in f:
-#                glVertex3f(*v[i])
-#        glEnd()
 
         if shape.cubeFillVL == None: shape.cubeFillVL = cubeFillList()
         # Assumes current matrix mode is ModelView
