@@ -51,7 +51,7 @@ class FBO(object):
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
 
-        # Add the texture ot the frame buffer as a color buffer
+        # Add the texture to the frame buffer as a color buffer
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, self.width, self.height, 
                      0, GL_RGBA, GL_UNSIGNED_BYTE, None)
         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, 

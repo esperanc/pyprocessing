@@ -132,6 +132,8 @@ def on_key_press(symbol, modifiers):
         key.char = chr(symbol)
     else:
         key.char = CODED
+    if key.modifiers == 1:
+        key.char = key.char.upper()
     callback.keyPressed()
 
 def on_key_release(symbol, modifiers):

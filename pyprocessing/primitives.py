@@ -34,7 +34,7 @@ def background(*color):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
 def ellipse(x,y,width,height):
-    """Draws an ellipse with lower left corner at (x,y) and size (width,height)"""
+    """Draws an ellipse with center at (x,y) and size (width,height)"""
     if shape.quadric == None:
         shape.quadric = gl.gluNewQuadric()
     if shape.ellipseFillDL==None:

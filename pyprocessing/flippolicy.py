@@ -58,7 +58,7 @@ class PyprocessingWindow (pyglet.window.Window):
     pass
 
 class FBOWindow(PyprocessingWindow):
-    """This is a pyglet window where drawing in fact occurs inside an FBO.
+    """This is a pyglet window where drawing in fact occurs inside a FBO.
     The flip method is overridden so that instead of merely swapping the
     back and front buffers, the FBO is first blitted onto the back buffer.
     The idea is to provide a stable drawing canvas which is not erased or
