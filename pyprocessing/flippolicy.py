@@ -48,7 +48,7 @@ import pyglet
 from pyglet.gl import *
 from fbo import FBO
 
-__all__=['PyprocessingWindow','FBOWindow','SingleBufferWindow','AccumWindow']
+__all__=['PyprocessingWindow','FBOWindow','SingleBufferWindow','AccumWindow','BackupWindow']
 
 
 class PyprocessingWindow (pyglet.window.Window):
@@ -83,30 +83,16 @@ class FBOWindow(PyprocessingWindow):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        glPushAttrib(GL_ALL_ATTRIB_BITS)
         glViewport(0,0,self.width,self.height)
-        # Draws a quad with the fbo as a texture
-        glDisable(GL_BLEND)
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_LIGHTING)
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-        glEnable(GL_TEXTURE_2D)
-        glColor3f(1,1,1)
-        glBindTexture(GL_TEXTURE_2D, self.fbo.img)
-        glBegin(GL_QUADS)
-        for v,t in [((-1,-1,0),(0,0)),
-                ((-1,1,0),(0,1)),
-                ((1,1,0),(1,1)),
-                ((1,-1,0),(1,0))]: 
-           glTexCoord2f(*t)
-           glVertex3f(*v)
-        glEnd()
-        # restore the state
-        glMatrixMode(GL_PROJECTION)
+	glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, self.fbo.framebuffer)
+	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT)
+	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0)
+	glDrawBuffer(GL_BACK)
+	glBlitFramebufferEXT(0, 0, self.width, self.height, 0, 0, self.width, self.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
-        glPopAttrib()
 
         # do the actual flip
         super (FBOWindow, self).flip()
@@ -118,6 +104,10 @@ class FBOWindow(PyprocessingWindow):
         self.fbo.detach()
         self.fbo = FBO(w,h)
         self.fbo.attach()
+
+
+
+
 
 class SingleBufferWindow(PyprocessingWindow):
     """This is a pyglet window with a single buffer config."""
@@ -133,6 +123,44 @@ class SingleBufferWindow(PyprocessingWindow):
         keyargs['config'] = config
         super(SingleBufferWindow, self).__init__(*args, **keyargs)
          
+
+
+
+
+class BackupWindow(PyprocessingWindow):
+    """This is a pyglet window for which an array is used to keep the back
+    buffer contents consistent. The flip method is overridden so that 
+    instead of merely swapping the back and front buffers, the back buffer
+    contents are copied to an array in the CPU's memory, and after the flip
+    the contents are copied back."""
+    
+    def __init__(self, *args, **keyargs):
+        """Constructor"""
+        # construct the base class
+        if 'config' in keyargs:
+            config = keyargs['config']
+        else:
+            config = Config(double_buffer=True,depth_size=24)
+        keyargs['config'] = config
+        super(BackupWindow, self).__init__(*args, **keyargs)
+        
+
+
+
+
+    def flip(self):
+        """Override the flip method."""
+	currentpos = (c_int*2)(0)
+	buffer = ( GLubyte * (3*self.width*self.height) )(0)
+	glReadPixels(0, 0, self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+        super (BackupWindow, self).flip()
+	glGetIntegerv(GL_CURRENT_RASTER_POSITION, currentpos)
+	glRasterPos2i(0, 0)
+	glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+	glRasterPos2i(currentpos[0],currentpos[1])
+
+
+
         
 class AccumWindow(PyprocessingWindow):
     """This is a pyglet window for which an accumulation buffer is defined.

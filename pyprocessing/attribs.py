@@ -84,7 +84,7 @@ def hint(hintconst):
         attrib.depthTest = False
         glDisable(GL_DEPTH_TEST)
     elif hintconst in (DOUBLE_FLIP_POLICY,SINGLE_FLIP_POLICY,
-        FBO_FLIP_POLICY, ACCUM_FLIP_POLICY):
+        FBO_FLIP_POLICY, ACCUM_FLIP_POLICY,BACKUP_FLIP_POLICY):
         config.flipPolicy=hintconst
     else:
         raise ValueError,"Unknown hint"
