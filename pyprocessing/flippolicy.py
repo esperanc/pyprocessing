@@ -84,6 +84,7 @@ class FBOWindow(PyprocessingWindow):
         glPushMatrix()
         glLoadIdentity()
         glViewport(0,0,self.width,self.height)
+        # prepares and blits the FBO buffer onto the back buffer.
 	glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, self.fbo.framebuffer)
 	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT)
 	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0)
@@ -93,7 +94,6 @@ class FBOWindow(PyprocessingWindow):
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
-
         # do the actual flip
         super (FBOWindow, self).flip()
         # reattach the fbo for further drawing
@@ -131,8 +131,8 @@ class BackupWindow(PyprocessingWindow):
     """This is a pyglet window for which an array is used to keep the back
     buffer contents consistent. The flip method is overridden so that 
     instead of merely swapping the back and front buffers, the back buffer
-    contents are copied to an array in the CPU's memory, and after the flip
-    the contents are copied back."""
+    contents are copied to an array inside the CPU's memory, and after the flip
+    the contents are copied back to the back buffer."""
     
     def __init__(self, *args, **keyargs):
         """Constructor"""
@@ -144,20 +144,16 @@ class BackupWindow(PyprocessingWindow):
         keyargs['config'] = config
         super(BackupWindow, self).__init__(*args, **keyargs)
         
-
-
-
-
     def flip(self):
         """Override the flip method."""
-	currentpos = (c_int*2)(0)
-	buffer = ( GLubyte * (3*self.width*self.height) )(0)
-	glReadPixels(0, 0, self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+        currentpos = (c_int*2)(0)
+        buffer = ( GLubyte * (3*self.width*self.height) )(0)
+        glReadPixels(0, 0, self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
         super (BackupWindow, self).flip()
-	glGetIntegerv(GL_CURRENT_RASTER_POSITION, currentpos)
-	glRasterPos2i(0, 0)
-	glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
-	glRasterPos2i(currentpos[0],currentpos[1])
+        glGetIntegerv(GL_CURRENT_RASTER_POSITION, currentpos)
+        glRasterPos2i(0, 0)
+        glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+        glRasterPos2i(currentpos[0],currentpos[1])
 
 
 
