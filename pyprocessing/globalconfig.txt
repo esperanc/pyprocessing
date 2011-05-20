@@ -1,0 +1,6 @@
+multisample:True
+coordInversionHack:True 
+halfPixelShiftHack:False
+smoothFixHack:False
+flipPolicy:BACKUP_FLIP_POLICY
+

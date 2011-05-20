@@ -2,22 +2,25 @@ from pyprocessing import *
 from random import random
 import sys
 import os
-import ConfigParser
 
 nballs = 100
 balls = []
 
 
-"""This script is aimed to users who don't know which Flip Policy is
+"""This script is aimed at users who don't know which Flip Policy is
 best suited for their hardware setup. It will automatically display a
 simple pyprocessing example and give the user options to say if the
 graphics are displayed correctly: if not, then the setup will change
-the Flip Policy automatically and then run itself again."""
+the Flip Policy automatically and run itself again."""
 
 
 
 
 def setup():
+    global policy
+    if '-nodouble' not in sys.argv:
+        hint(DOUBLE_FLIP_POLICY)
+        policy = DOUBLE_FLIP_POLICY
     size(400,400)
     smooth()
     noStroke()
@@ -34,7 +37,6 @@ def setup():
         c = color(random(),random()*0.5+0.5,random()*0.5+0.5)
         balls.append([x,y,dx,dy,r,c])
     colorMode(RGB,256)
-
 
 def draw():
     fill(255,50)
@@ -59,31 +61,48 @@ def draw():
     text("%3d"%frame.rate,0,20)
         
 def mouseClicked():
-    global contents
+    global contents, policy
     if (height - 100 < mouse.y < height):
-        if (mouse.x < width/2):
-            sys.exit()
-        else:
-            if fbo.FBO.supported():
-                contents[0] = FBO_FLIP_POLICY
-	    else: 
-                contents[0] = BACKUP_FLIP_POLICY
-            f = open(os.path.expanduser("~/pyprocessing/config.txt"),"w")
+        for i in range(len(contents)-1,-1,-1):
+            if contents[i].find("flip") != -1 or contents[i] == "": 
+                del contents[i]
+        if (mouse.x > width/2):
+            if fbo.FBO.supported(): policy = FBO_FLIP_POLICY 
+	    else: policy = BACKUP_FLIP_POLICY
+            f = open(os.path.expanduser("~/.pyprocessing/userconfig.txt"),"w")
+            contents.append("flipPolicy:"+policy)
             contents = '\n'.join(contents)
             f.write(contents)
             f.close()
-	    os.system('python %s'%sys.argv[0])
+	    os.system('python %s -nodouble'%sys.argv[0])
+            sys.exit()
+        else:
+            if '-nodouble' in sys.argv: sys.exit()
+            f = open(os.path.expanduser("~/.pyprocessing/userconfig.txt"),"w")
+            contents.append("flipPolicy:"+policy)
+            contents = '\n'.join(contents)
+            f.write(contents)
+            f.close()
             sys.exit()
 
+try:
+    f = open(os.path.expanduser("~/.pyprocessing/userconfig.txt"),"r")
+    contents = f.read()
+    f.close()
+    contents = contents.split('\n')
+except IOError:
+    try:
+        os.mkdir(os.path.expanduser("~/.pyprocessing"))
+    except OSError: None
+    contents = []
 
 
-f = open(os.path.expanduser("~/pyprocessing/config.txt"),"r")
-contents = f.read()
-f.close()
-contents = contents.split('\n')
+
+
 
 
 run()
+
 
 
 
