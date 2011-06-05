@@ -233,9 +233,9 @@ def box(*args):
     def cubeFillList ():
         "Creates a vertex list for drawing a unit cube in filled mode."
         v = []
-        for x in -0.5,0.5: 
-            for y in -0.5,0.5:
-                for z in -0.5,0.5:
+        for x in -1.0,1.0: 
+            for y in -1.0,1.0:
+                for z in -1.0,1.0:
                     v+=[(x,y,z)]
         p,n = [],[] 
         for f in (0,1,3,2),(5,4,6,7),(5,1,0,4),(2,3,7,6),(2,6,4,0),(1,5,7,3):
