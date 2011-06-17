@@ -15,7 +15,7 @@ from math import *
 __all__=['beginShape', 'vertex', 'normal', 'bezierVertex', 'endShape',
          'bezierDetail', 'bezierPoint', 'bezierTangent', 'bezierSample',
          'bezier', 'curveTightness', 'curve', 'curveVertex', 'curvePoint', 'curveDetail',
-         'curveTangent']
+         'curveTangent','sphereDetail']
          
 def beginShape(type=None):
     """Begins the drawing of a shape."""
@@ -306,3 +306,13 @@ def curveTangent (a,b,c,d,t):
 def curveDetail(npts=shape.curveDetail):
     """Controls the number of samples per curve arc."""
     shape.curveDetail = npts
+
+def sphereDetail(*args):
+    """Controls the how many segments are used per circle revolution while drawing a
+    sphere. The first and second parameters determine the number of segments used    
+    longitudinally and latitudinally, respectively. If only one parameter is used, it
+    determines the total number of segments used per full circle revolution."""
+    if len(args)==1:
+        shape.sphereDetail = (args[0], args[0])
+    elif len(args)==2:
+        shape.sphereDetail = (args[0], args[1])

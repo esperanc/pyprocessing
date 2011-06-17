@@ -46,7 +46,7 @@ except:
     installation. Please visit http://www.pyglet.org."""
     exit(-1)
     
-import sys,math,ctypes,os
+import sys,math,ctypes,os,time
 from math import *
 from pyglet.gl import *
 
@@ -213,6 +213,10 @@ def noCursor():
     """Hides the cursor."""
     canvas.window.set_mouse_visible(False)
     
+def delay(t):
+    """Stops the program for t milliseconds."""
+    time.sleep(t/1000.0)
+
 def loop():
     """Enables the periodical refresh of the screen."""
     frame.loop = True
@@ -233,6 +237,14 @@ def frameRate(rate):
     frame.targetRate = rate
     if frame.loop: loop()    
         
+def popStyle():
+    """Restores the prior drawing settings."""
+    glPopAttrib(GL_ALL_ATTRIB_BITS)
+
+def pushStyle():
+    """Saves the current drawing settings."""
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+
 def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
          multisample=config.multisample):
     """Inits graphics screen with nx x ny pixels.

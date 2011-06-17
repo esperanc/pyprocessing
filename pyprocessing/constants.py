@@ -5,7 +5,7 @@ import pyglet.gl as gl
 #  CONSTANTS
 #************************
 
-version = "0.1.2.7" # This version of pyprocessing
+version = "0.1.2.8" # This version of pyprocessing
 
 #keycodes
 F1 = 65470
@@ -108,6 +108,16 @@ SINGLE_FLIP_POLICY='SINGLE_FLIP_POLICY'
 FBO_FLIP_POLICY='FBO_FLIP_POLICY'
 ACCUM_FLIP_POLICY='ACCUM_FLIP_POLICY'
 BACKUP_FLIP_POLICY='BACKUP_FLIP_POLICY'
+
+#filter modes
+THRESHOLD='THRESOLD'
+GRAY='GRAY'
+INVERT='INVERT'
+POSTERIZE='POSTERIZE'
+BLUR='BLUR'
+OPAQUE='OPAQUE'
+ERODE='ERODE'
+DILATE='DILATE'
 
 # shapes 
 POINTS = gl.GL_POINTS

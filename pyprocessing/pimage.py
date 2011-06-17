@@ -5,9 +5,13 @@ from constants import *
 import config
 import ctypes
 
+from colors import _getColor, color
+
+
+
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage']
 
 # the PImage class
 
@@ -50,6 +54,146 @@ class PImage (object):
         self.buf = self.img.get_image_data().get_data('BGRA',-self.width*4)
         self.pixels = ctypes.cast(self.buf,ctypes.POINTER(ctypes.c_uint))
         
+    def filter(self,mode,*args):
+        """Applies a filter to the image.
+        The existant filters are: GRAY, INVERT, OPAQUE, THRESHOLD, POSTERIZE,
+        ERODE and DILATE."""
+        if mode == GRAY:
+            for i in range(0,self.width):
+                for j in range(0,self.height):
+                    n = self.get(i,j)
+                    rgba = _getColor(n)
+                    lum = (77*(n>>16&0xff) + 151*(n>>8&0xff) + 28*(n&0xff)) >> 8
+                    new = (n & -16777216) | lum<<16 | lum<<8 | lum
+                    self.set(i,j,new)
+        elif mode == INVERT:
+            for i in range(0,self.width):
+                for j in range(0,self.height):
+                    n = self.get(i,j)
+                    n ^= 0xffffff
+                    self.set(i,j,n)
+        elif mode == OPAQUE:
+            for i in range(0,self.width):
+                for j in range(0,self.height):
+                    n = self.get(i,j)
+                    rgba = _getColor(n)
+                    new = (rgba[0],rgba[1],rgba[2],1)
+                    new = color(new)
+                    self.set(i,j,new)
+        elif mode == THRESHOLD:
+            thresh = args[0]*255
+            for i in range(0,self.width):
+                for j in range(0,self.height):
+                    n = self.get(i,j)
+                    new = max((n & 16711680) >> 16, max((n & 65280)>>8, (n & 255)))
+                    if new < thresh: new = (new & -16777216) | 0x000000
+                    else: new = (new & -16777216) | 0xffffff
+                    self.set(i,j,new)
+        elif mode == POSTERIZE:
+            levels1 = args[0] - 1
+            for i in range(0,self.width):
+                for j in range(0,self.height):
+                    n = self.get(i,j)
+                    rlevel = (n >> 16) & 0xff
+                    glevel = (n >> 8) & 0xff
+                    blevel = n & 0xff
+                    rlevel = (((rlevel*args[0])>>8)*255)/levels1
+                    blevel = (((blevel*args[0])>>8)*255)/levels1
+                    glevel = (((glevel*args[0])>>8)*255)/levels1
+                    new = ((0xff000000 & n) | (rlevel << 16) | (glevel << 8) | blevel)
+                    self.set(i,j,new)
+        elif mode == ERODE:
+            currIdx=0
+            maxIdx=self.width*self.height
+            out = [0]*(maxIdx)
+            while (currIdx<maxIdx):
+                currRowIdx=currIdx
+                maxRowIdx=currIdx+self.width
+                while (currIdx<maxRowIdx):
+                    colOrig=colOut=self.pixels[currIdx]
+                    idxLeft=currIdx-1
+                    idxRight=currIdx+1
+                    idxUp=currIdx-self.width
+                    idxDown=currIdx+self.width
+                    if (idxLeft<currRowIdx): idxLeft=currIdx
+                    if (idxRight>=maxRowIdx): idxright=currIdx
+                    if (idxUp<0): idxUp=0
+                    if (idxDown>=maxIdx): idxDown=currIdx
+                    colUp=self.pixels[idxUp]
+                    colLeft=self.pixels[idxLeft]
+                    colDown=self.pixels[idxDown]
+                    colRight=self.pixels[idxRight]
+                    currLum=77*(colOrig>>16&0xff)+151*(colOrig>>8&0xff)+28*(colOrig&0xff)
+                    lumLeft=77*(colLeft>>16&0xff)+151*(colLeft>>8&0xff)+28*(colLeft&0xff)
+                    lumRight=77*(colRight>>16&0xff)+151*(colRight>>8&0xff)+28*(colRight&0xff)
+                    lumUp=77*(colUp>>16&0xff)+151*(colUp>>8&0xff)+28*(colUp&0xff)
+                    lumDown=77*(colDown>>16&0xff)+151*(colDown>>8&0xff)+28*(colDown&0xff)
+                    if (lumLeft>currLum):
+                        colOut=colLeft
+                        currLum=lumLeft
+                    if (lumRight>currLum):
+                        colOut=colRight
+                        currLum=lumRight
+                    if (lumUp>currLum):
+                        colOut=colUp
+                        currLum=lumUp
+                    if (lumDown>currLum):
+                        colOut=colDown
+                        currLum=lumDown
+                    out[currIdx]=colOut
+                    currIdx+=1
+            for i in range(0,maxIdx): self.pixels[i] = out[i]
+        elif mode == DILATE:
+            currIdx=0
+            maxIdx=self.width*self.height
+            out = [0]*(maxIdx)
+            while (currIdx<maxIdx):
+                currRowIdx=currIdx
+                maxRowIdx=currIdx+self.width
+                while (currIdx<maxRowIdx):
+                    colOrig=colOut=self.pixels[currIdx]
+                    idxLeft=currIdx-1
+                    idxRight=currIdx+1
+                    idxUp=currIdx-self.width
+                    idxDown=currIdx+self.width
+                    if (idxLeft<currRowIdx): idxLeft=currIdx
+                    if (idxRight>=maxRowIdx): idxright=currIdx
+                    if (idxUp<0): idxUp=0
+                    if (idxDown>=maxIdx): idxDown=currIdx
+                    colUp=self.pixels[idxUp]
+                    colLeft=self.pixels[idxLeft]
+                    colDown=self.pixels[idxDown]
+                    colRight=self.pixels[idxRight]
+                    currLum=77*(colOrig>>16&0xff)+151*(colOrig>>8&0xff)+28*(colOrig&0xff)
+                    lumLeft=77*(colLeft>>16&0xff)+151*(colLeft>>8&0xff)+28*(colLeft&0xff)
+                    lumRight=77*(colRight>>16&0xff)+151*(colRight>>8&0xff)+28*(colRight&0xff)
+                    lumUp=77*(colUp>>16&0xff)+151*(colUp>>8&0xff)+28*(colUp&0xff)
+                    lumDown=77*(colDown>>16&0xff)+151*(colDown>>8&0xff)+28*(colDown&0xff)
+                    if (lumLeft<currLum):
+                        colOut=colLeft
+                        currLum=lumLeft
+                    if (lumRight<currLum):
+                        colOut=colRight
+                        currLum=lumRight
+                    if (lumUp<currLum):
+                        colOut=colUp
+                        currLum=lumUp
+                    if (lumDown<currLum):
+                        colOut=colDown
+                        currLum=lumDown
+                    out[currIdx]=colOut
+                    currIdx+=1
+            for i in range(0,maxIdx): self.pixels[i] = out[i]
+
+    def mask(self,image):
+    """Uses the image passed as parameter as alpha mask."""
+        for i in range(0,self.width):
+            for j in range(0,self.height):
+                n = self.get(i,j)
+                m = image.get(i,j)
+                new = ((m & 0xff) << 24) | (n & 0xffffff)
+                self.set(i,j,new)
+
     def updatePixels(self):
         """Saves the pixel data."""
         self.img.get_image_data().set_data('BGRA',-self.width*4,self.buf)
@@ -109,6 +253,9 @@ class PImage (object):
 
 # Image functions
     
+def createImage(width, height, format):
+    return PImage(width, height, format)
+
 def loadImage(filename,extension=None):
     """Loads an image from a file. Returns a PImage. Currently the extension
     argument is ignored."""
@@ -162,7 +309,6 @@ def get(*args):
         x,y = args
         return PImage(pyglet.image.get_buffer_manager().get_color_buffer()).get(x,y)
 
-
 def setScreen (x,y,data):
     """Sets the position x,y of the screen with data, which can be a color or
     a PImage.
@@ -181,9 +327,7 @@ def setScreen (x,y,data):
  	                 GL_UNSIGNED_BYTE, 
  	                 byref(buf))
         
-    
 def save(filename):
     """Saves the canvas into a file. Note that only .png images are supported by
     pyglet unless PIL is also installed."""
     get().save(filename)
-    

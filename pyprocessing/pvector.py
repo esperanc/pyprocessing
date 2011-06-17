@@ -1,10 +1,32 @@
 from math import sqrt
+import new
 
 __all__ = ['PVector']
+
+
+class PVectorMeta(type):
+    def add(cls, v1, v2):
+        return v1 + v2
+    def sub(cls, v1, v2):
+        return v1 - v2
+    def mult(cls, v1, v2):
+        return v1 * v2
+    def div(cls, v1, v2):
+        return v1 / v2
+
+class overload(object):
+    def __init__(self, method):
+        self.method = method
+    def __get__(self, instance, cls):
+        if instance is None:
+            clsmethod = getattr(cls.__class__, self.method.__name__)
+            return new.instancemethod(clsmethod, cls, cls.__class__)
+        return new.instancemethod(self.method, instance, cls)
 
 class PVector(list):
     """A vector class that mimics Processing's PVector class."""
 
+    __metaclass__ = PVectorMeta
     def __init__(self, *args):
         """Constructor"""
         list.__init__(self)
@@ -31,6 +53,7 @@ class PVector(list):
         """Must also override the += operator"""
         self [:] = [self [i]+v2[i] for i in range(3)]
         
+    @overload
     def add(self,v2):
         """Adds vector v2 to this vector."""
         self [:] = self + v2
@@ -39,6 +62,7 @@ class PVector(list):
         """Returns the difference between this vector and vector v2."""
         return PVector ([self [i]-v2[i] for i in range(3)])
         
+    @overload
     def sub(self,v2):
         """Subtracts vector v2 from this vector."""
         self [:] = self - v2
@@ -50,6 +74,7 @@ class PVector(list):
         else: 
             return PVector ([self [i]*v2 for i in range(3)])
 
+    @overload
     def mult (self, v2):
         """Multiplies this vector by v2 (a vector or a scalar)"""
         self [:] = self*v2
@@ -61,6 +86,7 @@ class PVector(list):
         else: 
             return PVector ([self [i]/v2 for i in range(3)])
 
+    @overload
     def div (self, v2):
         """Divides this vector by v2 (a vector or a scalar)"""
         self [:] = self/v2

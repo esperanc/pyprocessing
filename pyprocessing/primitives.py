@@ -9,6 +9,7 @@ from constants import *
 from attribs import *
 from colors import _getColor
 import config
+from pimage import *
 
 __all__=['_smoothFixHackBegin', '_smoothFixHackEnd',
          'background', 'ellipse', 'arc', 'rect', 'quad',
@@ -29,9 +30,12 @@ def background(*color):
     """Clears the screen with color. 
     Color may be an (r,g,b) tuple or a single gray value. If depth testing is
     turned on, also clears the depth buffer."""
-    color = _getColor(*color)
-    glClearColor (*color)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    if len(color) == 1 and isinstance(color[0],PImage):
+        image(color[0],0,0)
+    else:
+        color = _getColor(*color)
+        glClearColor (*color)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
 def ellipse(x,y,width,height):
     """Draws an ellipse with center at (x,y) and size (width,height)"""
