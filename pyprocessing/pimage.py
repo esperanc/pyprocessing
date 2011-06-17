@@ -186,7 +186,7 @@ class PImage (object):
             for i in range(0,maxIdx): self.pixels[i] = out[i]
 
     def mask(self,image):
-    """Uses the image passed as parameter as alpha mask."""
+        """Uses the image passed as parameter as alpha mask."""
         for i in range(0,self.width):
             for j in range(0,self.height):
                 n = self.get(i,j)
