@@ -85,12 +85,12 @@ class FBOWindow(PyprocessingWindow):
         glLoadIdentity()
         glViewport(0,0,self.width,self.height)
         # prepares and blits the FBO buffer onto the back buffer.
-	glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, self.fbo.framebuffer)
-	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT)
-	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0)
-	glDrawBuffer(GL_BACK)
-	glBlitFramebufferEXT(0, 0, self.width, self.height, 0, 0, self.width, self.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glMatrixMode(GL_PROJECTION)
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, self.fbo.framebuffer)
+        glReadBuffer(GL_COLOR_ATTACHMENT0_EXT)
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0)
+        glDrawBuffer(GL_BACK)
+        glBlitFramebufferEXT(0, 0, self.width, self.height, 0, 0, self.width, self.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
@@ -143,19 +143,31 @@ class BackupWindow(PyprocessingWindow):
             config = Config(double_buffer=True,depth_size=24)
         keyargs['config'] = config
         super(BackupWindow, self).__init__(*args, **keyargs)
+        self.buffer = ( GLubyte * (4*self.width*self.height) )(0)
+        self.currentpos = (c_int*2)(0)
         
     def flip(self):
         """Override the flip method."""
-        currentpos = (c_int*2)(0)
-        buffer = ( GLubyte * (3*self.width*self.height) )(0)
-        glReadPixels(0, 0, self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+        glReadPixels(0, 0, self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE, self.buffer)
         super (BackupWindow, self).flip()
-        glGetIntegerv(GL_CURRENT_RASTER_POSITION, currentpos)
-        glRasterPos2i(0, 0)
-        glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
-        glRasterPos2i(currentpos[0],currentpos[1])
+        glGetIntegerv(GL_CURRENT_RASTER_POSITION, self.currentpos)
+        glMatrixMode (GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glMatrixMode (GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glWindowPos2i(0,0)
+        glDrawPixels(self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE, self.buffer)
+        glPopMatrix()
+        glMatrixMode (GL_MODELVIEW)
+        glPopMatrix()
+        glRasterPos2i(self.currentpos[0],self.currentpos[1])
 
-
+    def on_resize(self,w,h):
+	"""Window changed size. Must reallocate backing buffer."""
+        super (FBOWindow, self).on_resize(w,h)
+        self.buffer = ( GLubyte * (4*w*h) )(0) 
 
         
 class AccumWindow(PyprocessingWindow):
@@ -188,4 +200,3 @@ class AccumWindow(PyprocessingWindow):
         super (AccumWindow, self).flip()
         # copy the accum buffer to the back buffer
         glAccum(GL_RETURN, 1)
-

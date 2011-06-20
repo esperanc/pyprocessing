@@ -68,4 +68,3 @@ try:
         if i != "": vars()[i.split(":")[0]] = eval(i.split(":")[1])
 except:
     None
-

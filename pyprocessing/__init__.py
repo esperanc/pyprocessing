@@ -376,7 +376,7 @@ def run():
     if 'setup' in maindir: 
         __main__.setup()
         # Call draw at least once even if setup called noloop
-        if 'draw' in maindir: __main__.draw()
+        __draw()
         
     # set up other callbacks
     canvas.window.event(on_close)
