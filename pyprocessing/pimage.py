@@ -254,6 +254,7 @@ class PImage (object):
 # Image functions
     
 def createImage(width, height, format):
+    """Returns an empty PImage object."""
     return PImage(width, height, format)
 
 def loadImage(filename,extension=None):

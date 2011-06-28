@@ -47,6 +47,7 @@ by editting the config variable in the globs submodule.
 import pyglet
 from pyglet.gl import *
 from fbo import FBO
+from pimage import *
 
 __all__=['PyprocessingWindow','FBOWindow','SingleBufferWindow','AccumWindow','BackupWindow']
 
@@ -105,10 +106,6 @@ class FBOWindow(PyprocessingWindow):
         self.fbo = FBO(w,h)
         self.fbo.attach()
 
-
-
-
-
 class SingleBufferWindow(PyprocessingWindow):
     """This is a pyglet window with a single buffer config."""
     
@@ -122,11 +119,10 @@ class SingleBufferWindow(PyprocessingWindow):
         config.double_buffer = False
         keyargs['config'] = config
         super(SingleBufferWindow, self).__init__(*args, **keyargs)
+        glDrawBuffer(GL_FRONT)
+        
+    def flip(self): pass
          
-
-
-
-
 class BackupWindow(PyprocessingWindow):
     """This is a pyglet window for which an array is used to keep the back
     buffer contents consistent. The flip method is overridden so that 
@@ -137,14 +133,14 @@ class BackupWindow(PyprocessingWindow):
     def __init__(self, *args, **keyargs):
         """Constructor"""
         # construct the base class
-        if 'config' in keyargs:
-            config = keyargs['config']
-        else:
-            config = Config(double_buffer=True,depth_size=24)
-        keyargs['config'] = config
+        #if 'config' in keyargs:
+        #    config = keyargs['config']
+        #else:
+        #    config = Config(double_buffer=True,depth_size=24)
+        #keyargs['config'] = config
         super(BackupWindow, self).__init__(*args, **keyargs)
-        self.buffer = ( GLubyte * (4*self.width*self.height) )(0)
-        self.currentpos = (c_int*2)(0)
+        self.buffer = ( GLubyte * (4*self.width*self.height) )()
+        self.currentpos = (c_int*2)()
         
     def flip(self):
         """Override the flip method."""
@@ -158,18 +154,19 @@ class BackupWindow(PyprocessingWindow):
         glPushMatrix()
         glLoadIdentity()
         glWindowPos2i(0,0)
+        glDisable(GL_DEPTH_TEST)
         glDrawPixels(self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE, self.buffer)
+        glEnable(GL_DEPTH_TEST)
         glPopMatrix()
         glMatrixMode (GL_MODELVIEW)
         glPopMatrix()
         glRasterPos2i(self.currentpos[0],self.currentpos[1])
-
+        
     def on_resize(self,w,h):
 	"""Window changed size. Must reallocate backing buffer."""
         super (FBOWindow, self).on_resize(w,h)
         self.buffer = ( GLubyte * (4*w*h) )(0) 
 
-        
 class AccumWindow(PyprocessingWindow):
     """This is a pyglet window for which an accumulation buffer is defined.
     The flip method is overridden so that instead of merely swapping the

@@ -14,7 +14,7 @@ __all__=['pushMatrix', 'popMatrix', 'resetMatrix', 'applyMatrix', 'getMatrix',
          'translate', 'rotate', 'rotateX', 'rotateY', 'rotateZ',
          'scale', 'camera', 'perspective', 'ortho',
          'screenXYZ', 'screenX', 'screenY', 'screenZ',
-         'modelXYZ','modelX', 'modelY', 'modelZ']
+         'modelXYZ','modelX', 'modelY', 'modelZ', 'shearX', 'shearY']
          
 def pushMatrix(): 
     """Saves current transformation"""
@@ -32,12 +32,28 @@ def applyMatrix(n00, n01, n02, n03,
                 n04, n05, n06, n07,
                 n08, n09, n10, n11,
                 n12, n13, n14, n15):
-    """Loads an identity matrix"""
+    """Applies matrix."""
     # notice that processing uses a transposed matrix
     glMultMatrixf((ctypes.c_float * 16)(n00, n04, n08, n12,
                 n01, n05, n09, n13,
                 n02, n06, n10, n14,
                 n03, n07, n11, n15))
+
+def shearX(angle):
+    """Loads an identity matrix"""
+    # notice that processing uses a transposed matrix
+    glMultMatrixf((ctypes.c_float * 16)(1, 0, 0, 0,
+                angle, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1))
+
+def shearY(angle):
+    """Loads an identity matrix"""
+    # notice that processing uses a transposed matrix
+    glMultMatrixf((ctypes.c_float * 16)(1, angle, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1))
 
 def getMatrix():
     """Returns the MODELVIEW matrix as a tuple."""
