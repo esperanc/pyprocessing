@@ -9,7 +9,7 @@ from colors import _getColor
 import config
 
 __all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 'tint', 'noTint',
-         'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'hint']
+         'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'imageMode', 'hint']
          
 def stroke(*color):
     """Sets color as color for drawing lines and shape borders."""
@@ -66,6 +66,10 @@ def ellipseMode(mode):
 def rectMode(mode):
     """Alters the meaning of the arguments of the rectangle function"""
     attrib.rectMode = mode
+    
+def imageMode(mode):
+    """Alters the meaning of the arguments of the image function"""
+    attrib.imageMode = mode
     
 def hint(hintconst):
     """Sets/unsets configuration settings. 

@@ -264,10 +264,20 @@ def loadImage(filename,extension=None):
 
 def image(img, x, y, width=None, height=None):
     """Draws img at position x,y eventually scaled so that it has 
-    the given width and height."""
+    the given width and height. """
     sprite = pyglet.sprite.Sprite(img.img)
     sprite.x = x
     sprite.y = y
+    if attrib.imageMode == CORNERS:
+        width = width-x
+        height = height-y
+    elif attrib.imageMode == CENTER:
+        if width != None:
+            sprite.x -= width/2
+            sprite.y -= height/2
+        else:
+            sprite.x -= img.width/2
+            sprite.y -= img.height/2
     if attrib.tintColor != None:
         r,g,b,a = attrib.tintColor
         sprite.color = (int(r*255),int(g*255),int(b*255))

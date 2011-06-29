@@ -50,9 +50,9 @@ class attrib:
     strokeWeight = 1
     font = {}
     location = pyglet.resource.FileLocation(os.path.dirname(__file__))
-    
     rectMode = CORNER
     ellipseMode = CENTER
+    imageMode = CORNER
     textAlign = (LEFT,BASELINE)
     # color attribs
     colorMode = RGB

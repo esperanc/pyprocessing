@@ -422,4 +422,3 @@ if __name__=="__main__":
     ellipseMode(CENTER)
     rectMode (CENTER)
     run()
-
