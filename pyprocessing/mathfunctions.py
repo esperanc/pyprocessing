@@ -4,6 +4,39 @@
 
 import math
 
+
+
+def binary(*args):
+    """Converts a char or int to a string containing the equivalent binary notation."""
+    if isinstance(args[0],str): number = bin(ord(args[0]))[2:]
+    else: number = bin(args[0])[2:]
+    if len(args) == 1: return number
+    st = len(number) - args[1]
+    return number[st:]
+    
+def hex(*args):
+    """Converts a char or int to a string containing the equivalent hexadecimal notation."""
+    if isinstance(args[0],str): number = "%X"%ord(args[0])
+    else: number = "%X"%args[0]
+    if len(args) == 1: return number
+    return number[(len(number)-args[1]):]
+    
+def unbinary(value):
+    """Converts a string representation of a binary number to its equivalent integer value."""
+    return int(value,2)
+
+def unhex(value):
+    """Converts a string representation of a hexadecimal number to its equivalent integer value."""
+    return int(value,16)
+
+def byte(value):
+    """Converts a char or int to its byte representation."""
+    if isinstance(value,str) and len(value) == 1: return ord(value)
+    elif isinstance(value,int):
+        if value > 127: return byte(value-256)
+        if value < -128: return byte(256+value)
+        return value
+
 def constrain (value, minv, maxv):
     """Returns the constrained value so that it falls between minv and maxv."""
     return min(max(value,minv),maxv)

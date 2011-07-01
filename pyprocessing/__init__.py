@@ -78,6 +78,8 @@ import __builtin__
 
 __builtin__.width = __builtin__.height = 0
 
+starttime = time.time()
+
 #************************
 #  CALLBACK FUNCTIONS
 #************************
@@ -217,6 +219,31 @@ def delay(t):
     """Stops the program for t milliseconds."""
     time.sleep(t/1000.0)
 
+def day():
+    return int(time.strftime("%d",time.gmtime()))
+
+def hour():
+    gmt = int(time.strftime("%H",time.gmtime()))
+    timezone = time.timezone/60/60
+    if gmt < timezone: gmt+=24
+    if gmt-timezone > 23: return (gmt-timezone)%24
+    return gmt-timezone
+
+def millis():
+    return (time.time() - starttime)*1000
+
+def minute():
+    return int(time.strftime("%M",time.gmtime()))
+
+def month():
+    return int(time.strftime("%m",time.gmtime()))
+
+def second():
+    return int(time.strftime("%S",time.gmtime()))
+
+def year():
+    return int(time.strftime("%Y",time.gmtime()))
+
 def loop():
     """Enables the periodical refresh of the screen."""
     frame.loop = True
@@ -352,13 +379,12 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
     on_resize(sizex,sizey)
     # setup the default camera
     camera()
-
+    
 def run():
     """Registers callbacks and starts event loop."""
     import __main__
-    
     maindir = dir(__main__)
-
+    
     # Import callbacks from main program    
     if 'draw' in maindir: callback.draw = staticmethod(__main__.draw)
     if 'mousePressed' in maindir: callback.mousePressed = staticmethod(__main__.mousePressed)

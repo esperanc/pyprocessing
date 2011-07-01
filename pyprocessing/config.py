@@ -38,6 +38,7 @@ flipPolicy = BACKUP_FLIP_POLICY # this is the default and should work on all boa
 
 
 
+
 """Tries to import the global preferences from the globalconfig.txt file
 located inside the pyprocessing installation folder. These preferences
 have higher priority than defaults, but will be overriden by the user
@@ -51,6 +52,7 @@ try:
         if i != "": vars()[i.split(":")[0]] = eval(i.split(":")[1])
 except:
     None
+
 
 
 
