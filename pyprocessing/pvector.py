@@ -5,6 +5,7 @@ __all__ = ['PVector']
 
 
 class PVectorMeta(type):
+    """PVector's metaclass, used to enable class calls."""
     def add(cls, v1, v2):
         return v1 + v2
     def sub(cls, v1, v2):
@@ -15,6 +16,7 @@ class PVectorMeta(type):
         return v1 / v2
 
 class overload(object):
+    """Class used to implement the PVetor overload mechanism."""
     def __init__(self, method):
         self.method = method
     def __get__(self, instance, cls):

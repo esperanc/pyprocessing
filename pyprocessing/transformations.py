@@ -40,7 +40,8 @@ def applyMatrix(n00, n01, n02, n03,
                 n03, n07, n11, n15))
 
 def shearX(angle):
-    """Loads an identity matrix"""
+    """Shears a shape around the x-axis the amount specified by the angle
+    parameter"""
     # notice that processing uses a transposed matrix
     glMultMatrixf((ctypes.c_float * 16)(1, 0, 0, 0,
                 angle, 1, 0, 0,
@@ -48,7 +49,8 @@ def shearX(angle):
                 0, 0, 0, 1))
 
 def shearY(angle):
-    """Loads an identity matrix"""
+    """	Shears a shape around the y-axis the amount specified by the angle
+    parameter."""
     # notice that processing uses a transposed matrix
     glMultMatrixf((ctypes.c_float * 16)(1, angle, 0, 0,
                 0, 1, 0, 0,

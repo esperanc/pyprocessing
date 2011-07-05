@@ -220,9 +220,11 @@ def delay(t):
     time.sleep(t/1000.0)
 
 def day():
+    """Returns the current day as a value from 1 - 31"""
     return int(time.strftime("%d",time.gmtime()))
 
 def hour():
+    """Returns the current hour as a value from 0 - 24"""
     gmt = int(time.strftime("%H",time.gmtime()))
     timezone = time.timezone/60/60
     if gmt < timezone: gmt+=24
@@ -230,18 +232,24 @@ def hour():
     return gmt-timezone
 
 def millis():
+    """Returns the number of milliseconds since starting
+    the application."""
     return (time.time() - starttime)*1000
 
 def minute():
+    """Returns the current minute as a value from 0 - 59"""
     return int(time.strftime("%M",time.gmtime()))
 
 def month():
+    """Returns the current month as a value from 1 - 12"""
     return int(time.strftime("%m",time.gmtime()))
 
 def second():
+    """Returns the current second as a value from 0 - 61"""
     return int(time.strftime("%S",time.gmtime()))
 
 def year():
+    """Returns the current year (2005, 2006, etc)"""
     return int(time.strftime("%Y",time.gmtime()))
 
 def loop():
