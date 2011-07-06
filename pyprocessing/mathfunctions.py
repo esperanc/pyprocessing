@@ -3,8 +3,50 @@
 #=====================
 
 import math
+from constants import perlin
 
-
+def noise(*args):
+    """Returns the Perlin noise value at specified coordinates."""
+    x = args[0]
+    if len(args) == 3: y, z = args[1], args[2]
+    elif len(args) == 2: y, z = args[1], 0
+    else: y = z = 0
+    X = int(math.floor(x)) & 255
+    Y = int(math.floor(y)) & 255
+    Z = int(math.floor(z)) & 255
+    x -= math.floor(x)
+    y -= math.floor(y)
+    z -= math.floor(z)
+    u = fade(x)
+    v = fade(y)
+    w = fade(z)
+    A = perlin[X]+Y
+    AA = perlin[A]+Z
+    AB = perlin[A+1]+Z
+    B = perlin[X+1]+Y
+    BA = perlin[B]+Z
+    BB = perlin[B+1]+Z
+    return plerp(w, plerp(v, plerp(u, grad(perlin[AA  ], x  , y  , z   ), grad(perlin[BA  ], x-1, y  , z   )),plerp(u, grad(perlin[AB  ], x  , y-1, z   ),grad(perlin[BB  ], x-1, y-1, z   ))),plerp(v, plerp(u, grad(perlin[AA+1], x  , y  , z-1 ),grad(perlin[BA+1], x-1, y  , z-1 )),plerp(u, grad(perlin[AB+1], x  , y-1, z-1 ),grad(perlin[BB+1], x-1, y-1, z-1 ))))
+        
+def fade(t):
+    """Used internally by noise()."""
+    return t*t*t*(t*(t*6-15)+10)
+    
+def plerp(t,a,b):
+    """Used internally by noise()."""
+    return a+t*(b-a)
+        
+def grad(ha,x,y,z):
+    """Used internally by noise()."""
+    h = ha & 15
+    if h < 8: u = x
+    else: u = y
+    if h < 4: v = y
+    elif h == 12 or h == 14: v = x
+    else: v = z
+    if h & 1 != 0: u = -u
+    if h & 2 != 0: v = -v
+    return u + v
 
 def binary(*args):
     """Converts a char or int to a string containing the equivalent binary notation."""
