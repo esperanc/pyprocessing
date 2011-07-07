@@ -28,15 +28,15 @@ def noise(*args):
     BB = perlin[B+1]+Z
     return plerp(w, plerp(v, plerp(u, grad(perlin[AA  ], x  , y  , z   ), grad(perlin[BA  ], x-1, y  , z   )),plerp(u, grad(perlin[AB  ], x  , y-1, z   ),grad(perlin[BB  ], x-1, y-1, z   ))),plerp(v, plerp(u, grad(perlin[AA+1], x  , y  , z-1 ),grad(perlin[BA+1], x-1, y  , z-1 )),plerp(u, grad(perlin[AB+1], x  , y-1, z-1 ),grad(perlin[BB+1], x-1, y-1, z-1 ))))
         
-def fade(t):
+def __fade(t):
     """Used internally by noise()."""
     return t*t*t*(t*(t*6-15)+10)
     
-def plerp(t,a,b):
+def __plerp(t,a,b):
     """Used internally by noise()."""
     return a+t*(b-a)
         
-def grad(ha,x,y,z):
+def __grad(ha,x,y,z):
     """Used internally by noise()."""
     h = ha & 15
     if h < 8: u = x
