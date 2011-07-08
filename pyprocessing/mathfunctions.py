@@ -17,16 +17,16 @@ def noise(*args):
     x -= math.floor(x)
     y -= math.floor(y)
     z -= math.floor(z)
-    u = fade(x)
-    v = fade(y)
-    w = fade(z)
+    u = __fade(x)
+    v = __fade(y)
+    w = __fade(z)
     A = perlin[X]+Y
     AA = perlin[A]+Z
     AB = perlin[A+1]+Z
     B = perlin[X+1]+Y
     BA = perlin[B]+Z
     BB = perlin[B+1]+Z
-    return plerp(w, plerp(v, plerp(u, grad(perlin[AA  ], x  , y  , z   ), grad(perlin[BA  ], x-1, y  , z   )),plerp(u, grad(perlin[AB  ], x  , y-1, z   ),grad(perlin[BB  ], x-1, y-1, z   ))),plerp(v, plerp(u, grad(perlin[AA+1], x  , y  , z-1 ),grad(perlin[BA+1], x-1, y  , z-1 )),plerp(u, grad(perlin[AB+1], x  , y-1, z-1 ),grad(perlin[BB+1], x-1, y-1, z-1 ))))
+    return __plerp(w, __plerp(v, __plerp(u, __grad(perlin[AA  ], x  , y  , z   ), __grad(perlin[BA  ], x-1, y  , z   )),__plerp(u, __grad(perlin[AB  ], x  , y-1, z   ),__grad(perlin[BB  ], x-1, y-1, z   ))),__plerp(v, __plerp(u, __grad(perlin[AA+1], x  , y  , z-1 ),__grad(perlin[BA+1], x-1, y  , z-1 )),__plerp(u, __grad(perlin[AB+1], x  , y-1, z-1 ),__grad(perlin[BB+1], x-1, y-1, z-1 ))))
         
 def __fade(t):
     """Used internally by noise()."""
