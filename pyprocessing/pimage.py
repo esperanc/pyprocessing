@@ -2,7 +2,6 @@ import pyglet
 from pyglet.gl import *
 from globs import *
 from constants import *
-from colors import *
 import config
 import ctypes
 
@@ -12,7 +11,7 @@ from colors import _getColor, color
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'blend']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage']
 
 # the PImage class
 
