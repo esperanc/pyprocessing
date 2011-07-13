@@ -331,7 +331,6 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
                         config=canvas.config, caption=caption, visible = isVisible)
     except pyglet.window.NoSuchConfigException, msg:
         # Fall back to a minimalistic config for older hardware
-        print "No suitable context:",msg,"\nGenerating a default context."
         display = pyglet.window.get_platform().get_default_display()
         screen = display.get_screens()[0]
         canvas.config = None
