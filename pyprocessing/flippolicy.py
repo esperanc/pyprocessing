@@ -133,11 +133,11 @@ class BackupWindow(PyprocessingWindow):
     def __init__(self, *args, **keyargs):
         """Constructor"""
         # construct the base class
-        #if 'config' in keyargs:
-        #    config = keyargs['config']
-        #else:
-        #    config = Config(double_buffer=True,depth_size=24)
-        #keyargs['config'] = config
+        if 'config' in keyargs:
+            config = keyargs['config']
+        else:
+            config = Config(double_buffer=True,depth_size=24)
+        keyargs['config'] = config
         super(BackupWindow, self).__init__(*args, **keyargs)
         self.buffer = ( GLubyte * (4*self.width*self.height) )()
         self.currentpos = (c_int*2)()

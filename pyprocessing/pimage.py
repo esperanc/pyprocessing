@@ -2,6 +2,7 @@ import pyglet
 from pyglet.gl import *
 from globs import *
 from constants import *
+from colors import *
 import config
 import ctypes
 
@@ -11,7 +12,7 @@ from colors import _getColor, color
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'blend']
 
 # the PImage class
 
@@ -59,22 +60,22 @@ class PImage (object):
         The existant filters are: GRAY, INVERT, OPAQUE, THRESHOLD, POSTERIZE,
         ERODE and DILATE."""
         if mode == GRAY:
-            for i in range(0,self.width):
-                for j in range(0,self.height):
+            for i in range(self.width):
+                for j in range(self.height):
                     n = self.get(i,j)
                     rgba = _getColor(n)
                     lum = (77*(n>>16&0xff) + 151*(n>>8&0xff) + 28*(n&0xff)) >> 8
                     new = (n & -16777216) | lum<<16 | lum<<8 | lum
                     self.set(i,j,new)
         elif mode == INVERT:
-            for i in range(0,self.width):
-                for j in range(0,self.height):
+            for i in range(self.width):
+                for j in range(self.height):
                     n = self.get(i,j)
                     n ^= 0xffffff
                     self.set(i,j,n)
         elif mode == OPAQUE:
-            for i in range(0,self.width):
-                for j in range(0,self.height):
+            for i in range(self.width):
+                for j in range(self.height):
                     n = self.get(i,j)
                     rgba = _getColor(n)
                     new = (rgba[0],rgba[1],rgba[2],1)
@@ -82,8 +83,8 @@ class PImage (object):
                     self.set(i,j,new)
         elif mode == THRESHOLD:
             thresh = args[0]*255
-            for i in range(0,self.width):
-                for j in range(0,self.height):
+            for i in range(self.width):
+                for j in range(self.height):
                     n = self.get(i,j)
                     new = max((n & 16711680) >> 16, max((n & 65280)>>8, (n & 255)))
                     if new < thresh: new = (new & -16777216) | 0x000000
@@ -91,8 +92,8 @@ class PImage (object):
                     self.set(i,j,new)
         elif mode == POSTERIZE:
             levels1 = args[0] - 1
-            for i in range(0,self.width):
-                for j in range(0,self.height):
+            for i in range(self.width):
+                for j in range(self.height):
                     n = self.get(i,j)
                     rlevel = (n >> 16) & 0xff
                     glevel = (n >> 8) & 0xff
@@ -142,7 +143,7 @@ class PImage (object):
                         currLum=lumDown
                     out[currIdx]=colOut
                     currIdx+=1
-            for i in range(0,maxIdx): self.pixels[i] = out[i]
+            for i in range(maxIdx): self.pixels[i] = out[i]
         elif mode == DILATE:
             currIdx=0
             maxIdx=self.width*self.height
@@ -183,12 +184,12 @@ class PImage (object):
                         currLum=lumDown
                     out[currIdx]=colOut
                     currIdx+=1
-            for i in range(0,maxIdx): self.pixels[i] = out[i]
+            for i in range(maxIdx): self.pixels[i] = out[i]
 
     def mask(self,image):
         """Uses the image passed as parameter as alpha mask."""
-        for i in range(0,self.width):
-            for j in range(0,self.height):
+        for i in range(self.width):
+            for j in range(self.height):
                 n = self.get(i,j)
                 m = image.get(i,j)
                 new = ((m & 0xff) << 24) | (n & 0xffffff)
@@ -337,7 +338,7 @@ def setScreen (x,y,data):
  	                 GL_BGRA, 
  	                 GL_UNSIGNED_BYTE, 
  	                 byref(buf))
-        
+ 	                 
 def save(filename):
     """Saves the canvas into a file. Note that only .png images are supported by
     pyglet unless PIL is also installed."""

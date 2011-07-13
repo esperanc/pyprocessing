@@ -222,7 +222,7 @@ def blend_lightest(a, b):
             high(a & BLUE_MASK, ((b & BLUE_MASK) * f) >> 8));
 
 def blend_darkest(a, b):
-    """Only returns the blended lightest colour """
+    """Only returns the blended darkest colour """
     f = (b & ALPHA_MASK) >> 24;
 
     return (low(((a & ALPHA_MASK) >> 24) + f, 0xff) << 24 |
