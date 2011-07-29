@@ -4,14 +4,12 @@ from globs import *
 from constants import *
 import config
 import ctypes
-
-from colors import _getColor, color
-
+from colors import _getColor, color,alpha
 
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'loadPixels', 'updatePixels']
 
 # the PImage class
 
@@ -252,7 +250,22 @@ class PImage (object):
     height = property(__getHeight)
 
 # Image functions
-    
+
+def loadPixels():
+    """Loads the data for the display window into the pixels array."""
+    current = get()
+    screen.pixels = (c_long*(width*height)) ()
+    for i in range(width*height): screen.pixels[i] = current.pixels[i]
+
+def updatePixels():
+    """Updates the display window with the data in the pixels array."""
+    new = createImage(width,height,'RGBA')
+    color = _getColor((200))
+    glClearColor (*color)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    for i in range(width*height): new.pixels[i] = screen.pixels[i]
+    image(new,0,0)
+
 def createImage(width, height, format):
     """Returns an empty PImage object."""
     return PImage(width, height, format)

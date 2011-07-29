@@ -7,6 +7,7 @@ __all__ = ['mouse', 'pmouse', 'attrib', 'frame', 'key', 'canvas', 'shape',
 #************************
 #  GLOBALS
 #************************
+
 class mouse:
     """Stores mouse state"""
     pressed = False # Tells if any mouse button is pressed
@@ -39,6 +40,7 @@ class canvas:
     
 class screen:
     """Current window properties."""
+    pixels = []
     width = None
     height = None
     

@@ -46,7 +46,7 @@ except:
     installation. Please visit http://www.pyglet.org."""
     exit(-1)
     
-import sys,math,ctypes,os,time
+import sys,math,ctypes,os,time,webbrowser
 from math import *
 from pyglet.gl import *
 
@@ -214,6 +214,10 @@ def cursor(*args):
 def noCursor():
     """Hides the cursor."""
     canvas.window.set_mouse_visible(False)
+    
+def link(url, target = None):
+    """Links to a webpage using the default browser."""
+    webbrowser.open(url)
     
 def delay(t):
     """Stops the program for t milliseconds."""
