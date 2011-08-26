@@ -7,7 +7,6 @@ import ctypes
 from colors import _getColor, color,alpha
 
 
-
 try:
     import numpy
     npy = True
@@ -17,7 +16,7 @@ except:
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'loadPixels', 'updatePixels']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'loadPixels', 'updatePixels','screenFilter']
 
 # the PImage class
 
@@ -67,8 +66,8 @@ class PImage (object):
         """Applies a filter to the image.
         The existant filters are: GRAY, INVERT, OPAQUE, THRESHOLD, POSTERIZE,
         ERODE and DILATE. This method requires numpy."""
+        if not npy: raise ImportError, "Numpy is required"
         if mode == GRAY:
-            if not npy: raise ImportError, "Numpy is required"
             lum1 = numpy.multiply(numpy.bitwise_and(numpy.right_shift(self.pixels,16),0xff),77)
             lum2 = numpy.multiply(numpy.bitwise_and(numpy.right_shift(self.pixels,8),0xff),151)
             lum3 = numpy.multiply(numpy.bitwise_and(self.pixels,0xff),28)
@@ -78,13 +77,10 @@ class PImage (object):
             self.pixels = numpy.bitwise_or(self.pixels,numpy.left_shift(lum,8))
             self.pixels = numpy.bitwise_or(self.pixels,lum)
         elif mode == INVERT:
-            if not npy: raise ImportError, "Numpy is required"
             self.pixels = numpy.bitwise_xor(self.pixels,0xffffff)
         elif mode == OPAQUE:
-            if not npy: raise ImportError, "Numpy is required"
             self.pixels = numpy.bitwise_or(self.pixels,0xff000000)
         elif mode == THRESHOLD:
-            if not npy: raise ImportError, "Numpy is required"
             if not args: args = [0.5]
             thresh = args[0]*255
             aux = numpy.right_shift(numpy.bitwise_and(self.pixels,0xff00),8)
@@ -94,7 +90,6 @@ class PImage (object):
             self.pixels.fill(0xffffff)
             self.pixels = numpy.multiply(self.pixels,boolmatrix)
         elif mode == POSTERIZE:
-            if not npy: raise ImportError, "Numpy is required"
             if not args: args = [8]
             levels1 = args[0] - 1
             rlevel = numpy.bitwise_and(numpy.right_shift(self.pixels,16),0xff)
@@ -111,7 +106,6 @@ class PImage (object):
             self.pixels = numpy.bitwise_or(self.pixels,numpy.left_shift(glevel,8))
             self.pixels = numpy.bitwise_or(self.pixels,blevel)
         elif mode == ERODE:
-            if not npy: raise ImportError, "Numpy is required"
             out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
@@ -159,7 +153,6 @@ class PImage (object):
             numpy.putmask(currLum,lumDown>currLum,lumDown)
             self.pixels = colOut
         elif mode == DILATE:
-            if not npy: raise ImportError, "Numpy is required"
             out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
@@ -206,7 +199,6 @@ class PImage (object):
             numpy.putmask(colOut,lumDown<currLum,colDown)
             numpy.putmask(currLum,lumDown<currLum,lumDown)
             self.pixels = colOut
-
 
     def mask(self,image):
         """Uses the image passed as parameter as alpha mask."""
@@ -283,7 +275,17 @@ class PImage (object):
     height = property(__getHeight)
 
 # Image functions
-
+def screenFilter(mode,*args):
+    """Applies a filter to the current drawing canvas.
+    This method requires numpy."""
+    if not npy: raise ImportError, "Numpy is required"
+    new = createImage(width,height,'RGBA')
+    loadPixels()
+    new.pixels = numpy.array(screen.pixels)
+    new.filter(mode,*args)
+    new.updatePixels()
+    image(new,0,0)
+    
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
     current = get()
