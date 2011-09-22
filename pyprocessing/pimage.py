@@ -4,7 +4,8 @@ from globs import *
 from constants import *
 import config
 import ctypes
-from colors import _getColor, color,alpha
+import math
+from colors import _getColor,color,blue
 
 
 try:
@@ -16,7 +17,7 @@ except:
 
 # exports
 
-__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'loadPixels', 'updatePixels','screenFilter']
+__all__=['PImage', 'loadImage', 'image', 'get', 'setScreen', 'save', 'createImage', 'loadPixels', 'updatePixels','screenFilter','blend']
 
 # the PImage class
 
@@ -38,7 +39,7 @@ class PImage (object):
             # Wraps an AbstractImage
             self.img = args[0]
         elif len(args) in (2,3):
-            # Creates an ImageData from width,height and type
+            # Creates an ImageData from width, height and type
             if len(args)==2: 
                 # default 
                 w,h = args
@@ -61,13 +62,15 @@ class PImage (object):
             self.pixels = numpy.fromstring(self.buf,dtype=ctypes.c_uint)
         else:
             self.pixels = ctypes.cast(self.buf,ctypes.POINTER(ctypes.c_uint))
-        
+
     def filter(self,mode,*args):
         """Applies a filter to the image.
         The existant filters are: GRAY, INVERT, OPAQUE, THRESHOLD, POSTERIZE,
-        ERODE and DILATE. This method requires numpy."""
+        ERODE, DILATE and BLUR. This method requires numpy."""
         if not npy: raise ImportError, "Numpy is required"
         if mode == GRAY:
+            #Gray value = (77*(n>>16&0xff) + 151*(n>>8&0xff) + 28*(n&0xff)) >> 8
+            #Where n is the ARGB color of the pixel
             lum1 = numpy.multiply(numpy.bitwise_and(numpy.right_shift(self.pixels,16),0xff),77)
             lum2 = numpy.multiply(numpy.bitwise_and(numpy.right_shift(self.pixels,8),0xff),151)
             lum3 = numpy.multiply(numpy.bitwise_and(self.pixels,0xff),28)
@@ -77,10 +80,80 @@ class PImage (object):
             self.pixels = numpy.bitwise_or(self.pixels,numpy.left_shift(lum,8))
             self.pixels = numpy.bitwise_or(self.pixels,lum)
         elif mode == INVERT:
+            #This is the same as applying an exclusive or with the maximum value
             self.pixels = numpy.bitwise_xor(self.pixels,0xffffff)
+        elif mode == BLUR:
+            if not args: args = [3]
+            #Makes the image square by adding zeros.
+            #This avoids the convolution (via fourier transform multiplication)
+            #from jumping to another extreme of the image when a border is reached
+            if self.width > self.height:
+                dif = self.width - self.height
+                updif = numpy.zeros(self.width*dif/2,dtype=numpy.uint32)
+                downdif = numpy.zeros(self.width*(dif-dif/2),dtype=numpy.uint32)
+                self.pixels = numpy.concatenate((updif,self.pixels,downdif))
+                size = self.width
+            elif self.width < self.height:
+                dif = self.height - self.width
+                leftdif = numpy.zeros(self.height*dif/2,dtype=numpy.uint32)
+                rightdif = numpy.zeros(self.height*(dif-dif/2),dtype=numpy.uint32)
+                self.pixels = self.pixels.reshape(self.height,self.width)
+                self.pixels = numpy.transpose(self.pixels)
+                self.pixels = self.pixels.reshape(self.width*self.height)
+                self.pixels = numpy.concatenate((leftdif,self.pixels,rightdif))
+                self.pixels = self.pixels.reshape(self.height,self.height)
+                self.pixels = numpy.transpose(self.pixels)
+                self.pixels = self.pixels.reshape(self.height*self.height)
+                size = self.height
+            else: size = self.height
+            #Creates a gaussian kernel of the image's size
+            _createKernel2d(args[0],size)
+            #Divides the image's R, G and B channels, reshapes them
+            #to square matrixes and applies two dimensional fourier transforms
+            red = numpy.bitwise_and(numpy.right_shift(self.pixels,16),0xff)
+            red = numpy.reshape(red,(size,size))
+            red = numpy.fft.fft2(red)
+            green = numpy.bitwise_and(numpy.right_shift(self.pixels,8),0xff)
+            green = numpy.reshape(green,(size,size))
+            green = numpy.fft.fft2(green)
+            blue = numpy.bitwise_and(self.pixels,0xff)                    
+            blue = numpy.reshape(blue,(size,size))
+            blue = numpy.fft.fft2(blue)
+            #Does a element-wise multiplication of each channel matrix
+            #and the fourier transform of the kernel matrix
+            kernel = numpy.fft.fft2(weights)
+            red = numpy.multiply(red,kernel)
+            green = numpy.multiply(green,kernel)
+            blue = numpy.multiply(blue,kernel)
+            #Reshapes them back to arrays and converts to unsigned integers
+            red = numpy.reshape(numpy.fft.ifft2(red).real,size*size)
+            green = numpy.reshape(numpy.fft.ifft2(green).real,size*size)
+            blue = numpy.reshape(numpy.fft.ifft2(blue).real,size*size)
+            red = red.astype(numpy.uint32)
+            green = green.astype(numpy.uint32)
+            blue = blue.astype(numpy.uint32)
+            self.pixels = numpy.bitwise_or(numpy.left_shift(green,8),blue)
+            self.pixels = numpy.bitwise_or(numpy.left_shift(red,16),self.pixels)
+            #Crops out the zeros added
+            if self.width > self.height: 
+                self.pixels = self.pixels[self.width*dif/2:size*size-self.width*(dif-dif/2)]
+            elif self.width < self.height:
+                self.pixels = numpy.reshape(self.pixels,(size,size))
+                self.pixels = numpy.transpose(self.pixels)
+                self.pixels = numpy.reshape(self.pixels,size*size)
+                self.pixels = self.pixels[self.height*dif/2:size*size-self.height*(dif-dif/2)]
+                self.pixels = numpy.reshape(self.pixels,(self.width,self.height))
+                self.pixels = numpy.transpose(self.pixels)
+                self.pixels = numpy.reshape(self.pixels,self.height*self.width)
         elif mode == OPAQUE:
+            #This is the same as applying an bitwise or with the maximum value
             self.pixels = numpy.bitwise_or(self.pixels,0xff000000)
         elif mode == THRESHOLD:
+            #Maximum = max((n & 0xff0000) >> 16, max((n & 0xff00)>>8, (n & 0xff)))
+            #Broken down to Maximum = max(aux,aux2)
+            #The pixel will be white if its maximum is greater than the threshold
+            #value, and black if not. This was implemented via a boolean matrix
+            #multiplication.
             if not args: args = [0.5]
             thresh = args[0]*255
             aux = numpy.right_shift(numpy.bitwise_and(self.pixels,0xff00),8)
@@ -90,6 +163,7 @@ class PImage (object):
             self.pixels.fill(0xffffff)
             self.pixels = numpy.multiply(self.pixels,boolmatrix)
         elif mode == POSTERIZE:
+            #New channel = ((channel*level)>>8)*255/(level-1)
             if not args: args = [8]
             levels1 = args[0] - 1
             rlevel = numpy.bitwise_and(numpy.right_shift(self.pixels,16),0xff)
@@ -106,6 +180,9 @@ class PImage (object):
             self.pixels = numpy.bitwise_or(self.pixels,numpy.left_shift(glevel,8))
             self.pixels = numpy.bitwise_or(self.pixels,blevel)
         elif mode == ERODE:
+            #Checks the pixels directly above, under and to the left and right
+            #of each pixel of the image. If it has a greater luminosity, then
+            #the center pixel receives its color
             out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
@@ -153,6 +230,9 @@ class PImage (object):
             numpy.putmask(currLum,lumDown>currLum,lumDown)
             self.pixels = colOut
         elif mode == DILATE:
+            #Checks the pixels directly above, under and to the left and right
+            #of each pixel of the image. If it has a lesser luminosity, then
+            #the center pixel receives its color
             out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
@@ -286,6 +366,39 @@ def screenFilter(mode,*args):
     new.updatePixels()
     image(new,0,0)
     
+def _mix(a, b, f):
+    #Used for the blend function
+    c = numpy.multiply(numpy.subtract(b,a),f)
+    return numpy.add(numpy.right_shift(c,8),a)
+
+def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
+    """Blends a region of pixels from one image into another. Currently
+    only the linear interpolation is implemented, but it currently has
+    no use since there is no full alpha channel support."""
+    if not npy: raise ImportError, "Numpy is required"
+    if mode == "BLEND":
+        a = source.pixels.reshape((source.width,source.height))
+        a = a[x:x+swidth,y:y+sheight]
+        a = a.reshape(a.shape[0]*a.shape[1])
+        loadPixels()
+        b = screen.pixels.reshape((width,height))
+        b = b[dx:dx+dwidth,dy:dy+dheight]
+        b = b.reshape(b.shape[0]*b.shape[1])
+        f = numpy.right_shift(numpy.bitwise_and(b,0xff000000),24)
+        aux1 = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        aux1 = numpy.left_shift(numpy.minimum(numpy.add(aux1,f),0xff),24)
+        aux2 = _mix(numpy.bitwise_and(a,0xff0000),numpy.bitwise_and(b,0xff0000),f)
+        aux2 = numpy.bitwise_and(aux2,0xff0000)
+        aux3 = _mix(numpy.bitwise_and(a,0xff00),numpy.bitwise_and(b,0xff00),f)
+        aux3 = numpy.bitwise_and(aux3,0xff00)
+        aux4 = _mix(numpy.bitwise_and(a,0xff),numpy.bitwise_and(b,0xff),f)
+        final = numpy.bitwise_or(numpy.bitwise_or(aux1,aux2),aux3)
+        final = numpy.bitwise_or(final,aux4)
+        new = createImage(swidth,sheight,'RGBA')
+        new.pixels = final
+        new.updatePixels()
+        image(new,dx,dy)
+
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
     current = get()
@@ -396,3 +509,28 @@ def save(filename):
     """Saves the canvas into a file. Note that only .png images are supported by
     pyglet unless PIL is also installed."""
     get().save(filename)
+    
+
+weights = []    
+    
+def createKernel(sigma):
+    #Creates a one dimensional gaussian kernel array of variable size
+    global kernel_size, weights
+    norm = 1.0/(math.sqrt(2.0*math.pi)*sigma)
+    kernel_size = int(math.ceil(6*sigma-1))
+    for i in range(-kernel_size/2,kernel_size/2+1):
+        w = norm * math.exp(-(i*i)/(2.0*sigma*sigma))
+        weights.append(w)
+     
+def _createKernel2d(sigma,size):
+    #Creates a two dimensional gaussian kernel of determined size
+    global weights
+    weights = numpy.empty([size,size])
+    print weights.shape
+    norm = 1.0/(math.pi*2.0*sigma*sigma)
+    for j in range(-size/2,size/2 + 1):
+        for i in range(-size/2,size/2 + 1):
+            w = norm * math.exp(-(i*i+j*j)/(2.0*sigma*sigma))
+            weights[i,j] = w
+    n = 1/numpy.sum(weights)
+    weights = numpy.multiply(weights,n)

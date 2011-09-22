@@ -415,7 +415,7 @@ def blend_dodge(a, b):
     bg = (b & GREEN_MASK) >> 8;
     bb = (b & BLUE_MASK);
     # formula:
-    if (br==255): cr= 255
+    if (br==255): cr = 255
     else: cr= peg((ar << 8) / (255 - br))
     if (bg==255): cg =255
     else: cg= peg((ag << 8) / (255 - bg))
@@ -440,9 +440,9 @@ def blend_burn(a, b):
     bg = (b & GREEN_MASK) >> 8;
     bb = (b & BLUE_MASK);
     # formula:
-    if (br==0): cr= 0
+    if (br==0): cr = 0
     else: cr= 255 - peg(((255 - ar) << 8) / br);
-    if (bg==0): cg =0
+    if (bg==0): cg = 0
     else: cg= 255 - peg(((255 - ag) << 8) / bg);
     if (bb==0): cb = 0 
     else: cb = 255 - peg(((255 - ab) << 8) / bb);
