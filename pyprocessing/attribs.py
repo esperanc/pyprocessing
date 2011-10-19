@@ -9,7 +9,8 @@ from colors import _getColor
 import config
 
 __all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 'tint', 'noTint',
-         'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'imageMode', 'hint']
+         'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'imageMode', 'hint',
+         'texture', 'textureMode']
          
 def stroke(*color):
     """Sets color as color for drawing lines and shape borders."""
@@ -39,6 +40,9 @@ def noTint():
 def noFill():
     """Omits filled drawings"""
     attrib.fillColor = None
+
+def texture(filename):
+    attrib.texture = filename
     
 def smooth():
     """Sets state so that lines are rendered antialiased."""
@@ -58,6 +62,10 @@ def noSmooth():
     glDisable(GL_LINE_SMOOTH)
     glDisable(GL_POINT_SMOOTH)
     glDisable(GL_POLYGON_SMOOTH)
+
+def textureMode(mode):
+    """Alters the meaning of the arguments of the ellipse function"""
+    attrib.textureMode = mode
 
 def ellipseMode(mode):
     """Alters the meaning of the arguments of the ellipse function"""

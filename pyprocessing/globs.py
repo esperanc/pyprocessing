@@ -46,6 +46,7 @@ class screen:
     
 class attrib:
     """Drawing attributes"""
+    textureMode = IMAGE
     strokeColor = (0,0,0,1)
     fillColor = (1,1,1,1)
     tintColor = None
@@ -66,6 +67,7 @@ class attrib:
     lightFalloff = (1, 0, 0) # constant, linear, quadratic
     # depth testing
     depthTest = True
+    texture = False
 
 class frame:
     """Frame rate and the like."""

@@ -322,7 +322,7 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
                     SINGLE_FLIP_POLICY:SingleBufferWindow,
                     FBO_FLIP_POLICY:FBOWindow,
                     ACCUM_FLIP_POLICY:AccumWindow,
-		    BACKUP_FLIP_POLICY:BackupWindow}[config.flipPolicy]
+                    BACKUP_FLIP_POLICY:BackupWindow}[config.flipPolicy]
     #
     # If single buffering is used, the window must be mapped onto 
     # the screen immediately (visible = True).

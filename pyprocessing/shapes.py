@@ -25,9 +25,10 @@ def beginShape(type=None):
     shape.crv = []  # contents of the last three curveVertex calls
     shape.nrm = []  # pairs (vtxindex,normal) 
 
-def vertex(x,y,z=0.0):
+def vertex(x,y,z=0.0,u=0.0,v=0.0):
     """Adds a new vertex to the shape"""
-    shape.vtx += [(x,y,z)]
+    if attrib.texture: shape.vtx += [(x,y,z,u,v)]
+    else: shape.vtx += [(x,y,z)]
 
 def normal(x,y,z):
     """Sets the next vertex's normal"""
@@ -55,9 +56,33 @@ def endShape(close=False):
     def computeNormal(p0,p1,p2):
         """Computes a normal for triangle p0-p1-p2."""
         return (PVector(p1)-PVector(p0)).cross(PVector(p2)-PVector(p1))
-    
+        
+    if attrib.texture:
+        glEnable(GL_TEXTURE_2D)
+        image = pyglet.image.load(attrib.texture)
+        texture = image.get_texture()
+        t = texture.tex_coords
+        glBindTexture(GL_TEXTURE_2D,texture.id)
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+        glTranslatef(0.0,t[7],0.0);
+        glMatrixMode(GL_MODELVIEW);
+        if attrib.textureMode == IMAGE:
+            normx = image.width
+            normy = image.height
+            print normx, normy
+        elif attrib.textureMode == NORMALIZED:
+            normx = normy = 1.0
+        if shape.type: glBegin(shape.type)
+        else: glBegin(GL_POLYGON)
+        for v in shape.vtx:
+            glTexCoord2f(v[3]*t[6]/normx,-v[4]*t[7]/normy)
+            glVertex3f(*v[:3])
+        glEnd()
+        attrib.texture = None
     # Draw the interior of the shape    
-    if attrib.fillColor != None:
+    elif attrib.fillColor != None:
         glColor4f(*attrib.fillColor)
         # establish an initial normal vector
         if shape.nrm != []:
@@ -131,6 +156,9 @@ def endShape(close=False):
                             glNormal3f (*normal)
                     glVertex3f(*v)
                 glEnd()
+                
+                
+                
     # Draw the outline of the shape
     if attrib.strokeColor != None:
         glColor4f(*attrib.strokeColor)

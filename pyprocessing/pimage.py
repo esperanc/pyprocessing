@@ -135,7 +135,7 @@ class PImage (object):
             self.pixels = numpy.bitwise_or(numpy.left_shift(green,8),blue)
             self.pixels = numpy.bitwise_or(numpy.left_shift(red,16),self.pixels)
             #Crops out the zeros added
-            if self.width > self.height: 
+            if self.width > self.height:
                 self.pixels = self.pixels[self.width*dif/2:size*size-self.width*(dif-dif/2)]
             elif self.width < self.height:
                 self.pixels = numpy.reshape(self.pixels,(size,size))
