@@ -59,8 +59,11 @@ def endShape(close=False):
         
     if attrib.texture:
         glEnable(GL_TEXTURE_2D)
-        image = pyglet.image.load(attrib.texture)
-        texture = image.get_texture()
+        if type(attrib.texture) == str:
+            image = pyglet.image.load(attrib.texture)
+            texture = image.get_texture()
+        else:
+            texture = attrib.texture.img.get_texture()
         t = texture.tex_coords
         glBindTexture(GL_TEXTURE_2D,texture.id)
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
