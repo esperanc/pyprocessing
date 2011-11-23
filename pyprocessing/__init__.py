@@ -313,9 +313,9 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         sizey = max(120,int(ny))
         canvas.margin = (sizex-nx, sizey-ny)
     if multisample: 
-        canvas.config = Config(sample_buffers=1,samples=4,depth_size=24,double_buffer=True)
+        canvas.config = Config(sample_buffers=1,samples=4,depth_size=24,double_buffer=True,alpha_size=8)
     else: 
-        canvas.config = Config(depth_size=24,double_buffer=True) # a sane default, hopefully
+        canvas.config = Config(depth_size=24,double_buffer=True,apha_size=8) # a sane default, hopefully
         
     # select the proper window class depending on the flippolicy
     windowClass = { DOUBLE_FLIP_POLICY:PyprocessingWindow,
@@ -333,9 +333,13 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
         canvas.window = windowClass(sizex, sizey, resizable=resizable,
                         fullscreen=fullscreen,
                         config=canvas.config, caption=caption, visible = isVisible)
+        #glEnable(GL_BLEND) 
+        #glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) 
+
     except pyglet.window.NoSuchConfigException, msg:
         # Fall back to a minimalistic config for older hardware
         display = pyglet.window.get_platform().get_default_display()
+        print "lol"
         screen = display.get_screens()[0]
         canvas.config = None
         for template_config in [

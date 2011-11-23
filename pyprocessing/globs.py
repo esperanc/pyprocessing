@@ -40,6 +40,7 @@ class canvas:
     
 class screen:
     """Current window properties."""
+    co = 2
     pixels = []
     width = None
     height = None

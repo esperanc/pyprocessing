@@ -285,7 +285,6 @@ class PImage (object):
         if npy:
             aux1 = numpy.bitwise_and(self.pixels,0xffffff)
             aux2 = numpy.bitwise_and(image.pixels,0xff000000)
-            aux2 = numpy.left_shift(aux,24)
             self.pixels = numpy.bitwise_or(aux1,aux2)
             return
         for i in range(self.width):
@@ -367,24 +366,43 @@ def screenFilter(mode,*args):
     image(new,0,0)
     
 def _mix(a, b, f):
-    #Used for the blend function
+    #Used for the blend function (mixes colors according to their alpha values)
     c = numpy.multiply(numpy.subtract(b,a),f)
     return numpy.add(numpy.right_shift(c,8),a)
+
+def _high(a, b):
+    #Used for the blend function (returns the matrix with the maximum bitwise values)
+    c = numpy.multiply(a.__le__(b),b)
+    d = numpy.multiply(a.__gt__(b),a)
+    return numpy.add(c,d)
+
+def _low(a, b):
+    #Used for the blend function (returns the matrix with the minimum bitwise values)
+    c = numpy.multiply(a.__ge__(b),b)
+    d = numpy.multiply(a.__lt__(b),a)
+    return numpy.add(c,d)
+
+def _peg(a):
+    #Used for the blend function (returns the matrix with the minimum bitwise values)
+    b = numpy.multiply(a.__ge__(0),b)
+    c = numpy.multiply(b.__lt__(255),a)
+    d = numpy.multiply(b.__gt__(255),255)
+    return numpy.add(c,d)
 
 def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     """Blends a region of pixels from one image into another. Currently
     only the linear interpolation is implemented, but it currently has
     no use since there is no full alpha channel support."""
     if not npy: raise ImportError, "Numpy is required"
-    if mode == "BLEND":
-        a = source.pixels.reshape((source.width,source.height))
-        a = a[x:x+swidth,y:y+sheight]
-        a = a.reshape(a.shape[0]*a.shape[1])
-        loadPixels()
-        b = screen.pixels.reshape((width,height))
-        b = b[dx:dx+dwidth,dy:dy+dheight]
-        b = b.reshape(b.shape[0]*b.shape[1])
-        f = numpy.right_shift(numpy.bitwise_and(b,0xff000000),24)
+    a = source.pixels.reshape((source.width,source.height))
+    a = a[x:x+swidth,y:y+sheight]
+    a = a.reshape(a.shape[0]*a.shape[1])
+    loadPixels()
+    b = screen.pixels.reshape((width,height))
+    b = b[dx:dx+dwidth,dy:dy+dheight]
+    b = b.reshape(b.shape[0]*b.shape[1])
+    f = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24) 
+    if mode == 0:
         aux1 = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         aux1 = numpy.left_shift(numpy.minimum(numpy.add(aux1,f),0xff),24)
         aux2 = _mix(numpy.bitwise_and(a,0xff0000),numpy.bitwise_and(b,0xff0000),f)
@@ -394,7 +412,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         aux4 = _mix(numpy.bitwise_and(a,0xff),numpy.bitwise_and(b,0xff),f)
         final = numpy.bitwise_or(numpy.bitwise_or(aux1,aux2),aux3)
         final = numpy.bitwise_or(final,aux4)
-        new = createImage(swidth,sheight,'RGBA')
+        new = createImage(swidth,sheight,'RGB')
         new.pixels = final
         new.updatePixels()
         image(new,dx,dy)
