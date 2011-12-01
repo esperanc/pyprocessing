@@ -384,39 +384,38 @@ def _low(a, b):
 
 def _peg(a):
     #Used for the blend function (returns the matrix with the minimum bitwise values)
-    b = numpy.multiply(a.__ge__(0),b)
-    c = numpy.multiply(b.__lt__(255),a)
+    b = numpy.multiply(a.__ge__(0),a)
+    c = numpy.multiply(b.__lt__(255),b)
     d = numpy.multiply(b.__gt__(255),255)
     return numpy.add(c,d)
 
 def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     """Blends a region of pixels from one image into another. Currently
-    only the linear interpolation is implemented, but it currently has
-    no use since there is no full alpha channel support."""
+    only the linear interpolation is implemented."""
     if not npy: raise ImportError, "Numpy is required"
-    a = source.pixels.reshape((source.width,source.height))
-    a = a[x:x+swidth,y:y+sheight]
-    a = a.reshape(a.shape[0]*a.shape[1])
+    a = source.pixels.reshape((source.height,source.width))
+    a = a[y:y+sheight,x:x+swidth]
+    a = a.reshape(a.shape[1]*a.shape[0])
     loadPixels()
-    b = screen.pixels.reshape((width,height))
-    b = b[dx:dx+dwidth,dy:dy+dheight]
-    b = b.reshape(b.shape[0]*b.shape[1])
-    f = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24) 
+    b = screen.pixels.reshape((height,width))
+    b = b[dy:dy+dheight,dx:dx+dwidth]
+    b = b.reshape(b.shape[1]*b.shape[0])
+    f = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
     if mode == 0:
-        aux1 = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
-        aux1 = numpy.left_shift(numpy.minimum(numpy.add(aux1,f),0xff),24)
-        aux2 = _mix(numpy.bitwise_and(a,0xff0000),numpy.bitwise_and(b,0xff0000),f)
-        aux2 = numpy.bitwise_and(aux2,0xff0000)
-        aux3 = _mix(numpy.bitwise_and(a,0xff00),numpy.bitwise_and(b,0xff00),f)
-        aux3 = numpy.bitwise_and(aux3,0xff00)
-        aux4 = _mix(numpy.bitwise_and(a,0xff),numpy.bitwise_and(b,0xff),f)
-        final = numpy.bitwise_or(numpy.bitwise_or(aux1,aux2),aux3)
-        final = numpy.bitwise_or(final,aux4)
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        alpha = numpy.left_shift(numpy.minimum(numpy.add(alpha,f),0xff),24)
+        red = _mix(numpy.bitwise_and(a,0xff0000),numpy.bitwise_and(b,0xff0000),f)
+        red = numpy.bitwise_and(red,0xff0000)
+        green = _mix(numpy.bitwise_and(a,0xff00),numpy.bitwise_and(b,0xff00),f)
+        green = numpy.bitwise_and(green,0xff00)
+        blue = _mix(numpy.bitwise_and(a,0xff),numpy.bitwise_and(b,0xff),f)
+        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+        final = numpy.bitwise_or(final,blue)
         new = createImage(swidth,sheight,'RGB')
         new.pixels = final
         new.updatePixels()
         image(new,dx,dy)
-
+        
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
     current = get()

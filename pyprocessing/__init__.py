@@ -339,7 +339,6 @@ def size(nx=100,ny=100,fullscreen=False,resizable=False,caption="pyprocessing",
     except pyglet.window.NoSuchConfigException, msg:
         # Fall back to a minimalistic config for older hardware
         display = pyglet.window.get_platform().get_default_display()
-        print "lol"
         screen = display.get_screens()[0]
         canvas.config = None
         for template_config in [
