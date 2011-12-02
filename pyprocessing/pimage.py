@@ -409,14 +409,8 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         green = _mix(numpy.bitwise_and(a,0xff00),numpy.bitwise_and(b,0xff00),f)
         green = numpy.bitwise_and(green,0xff00)
         blue = _mix(numpy.bitwise_and(a,0xff),numpy.bitwise_and(b,0xff),f)
-        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
-        final = numpy.bitwise_or(final,blue)
-        new = createImage(swidth,sheight,'RGB')
-        new.pixels = numpy.array(final,dtype='uint32')
-        new.updatePixels()
-        image(new,dx,dy)
     #ADD Mode
-    if mode == 1:
+    elif mode == 1:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
@@ -433,14 +427,8 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.multiply(blue,f)
         blue = numpy.add(blue,numpy.bitwise_and(a,0xff))
         blue = _low(blue,0xff)
-        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
-        final = numpy.bitwise_or(final,blue)
-        new = createImage(swidth,sheight,'RGB')
-        new.pixels = numpy.array(final,dtype='uint32')
-        new.updatePixels()
-        image(new,dx,dy)
     #SUBTRACT Mode
-    if mode == 2:
+    elif mode == 2:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
@@ -455,14 +443,8 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.right_shift(blue,8)
         blue = numpy.subtract(numpy.bitwise_and(a,0xff),blue)
         blue = _high(blue,0)
-        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
-        final = numpy.bitwise_or(final,blue)
-        new = createImage(swidth,sheight,'RGBA')
-        new.pixels = numpy.array(final,dtype='uint32')
-        new.updatePixels()
-        image(new,dx,dy)
     #LIGHEST Mode
-    if mode == 4:
+    elif mode == 4:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
@@ -476,17 +458,14 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
         blue = numpy.multiply(blue,f)
         blue = _high(numpy.bitwise_and(a,0xff),blue)
-        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
-        final = numpy.bitwise_or(final,blue)
-        new = createImage(swidth,sheight,'RGBA')
-        new.pixels = numpy.array(final,dtype='uint32')
-        new.updatePixels()
-        image(new,dx,dy)
-        
-        
-        
-        
-        
+    final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+    final = numpy.bitwise_or(final,blue)
+    new = createImage(swidth,sheight,'RGBA')
+    new.pixels = numpy.array(final,dtype='uint32')
+    new.updatePixels()
+    image(new,dx,dy)
+
+
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
     current = get()
