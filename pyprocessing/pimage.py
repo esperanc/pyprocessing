@@ -390,8 +390,7 @@ def _peg(a):
     return numpy.add(c,d)
 
 def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
-    """Blends a region of pixels from one image into another. Currently
-    only the linear interpolation is implemented."""
+    """Blends a region of pixels from one image into another."""
     if not npy: raise ImportError, "Numpy is required"
     a = source.pixels.reshape((source.height,source.width))
     a = a[y:y+sheight,x:x+swidth]
@@ -401,6 +400,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     b = b[dy:dy+dheight,dx:dx+dwidth]
     b = b.reshape(b.shape[1]*b.shape[0])
     f = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+    #BLEND Mode
     if mode == 0:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(numpy.minimum(numpy.add(alpha,f),0xff),24)
@@ -412,9 +412,80 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
         final = numpy.bitwise_or(final,blue)
         new = createImage(swidth,sheight,'RGB')
-        new.pixels = final
+        new.pixels = numpy.array(final,dtype='uint32')
         new.updatePixels()
         image(new,dx,dy)
+    #ADD Mode
+    if mode == 1:
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
+        red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
+        red = numpy.multiply(red,f)
+        red = numpy.add(red,numpy.bitwise_and(a,0xff0000))
+        red = _low(red,0xff0000)
+        red = numpy.bitwise_and(red,0xff0000)
+        green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
+        green = numpy.multiply(green,f)
+        green = numpy.add(green,numpy.bitwise_and(a,0xff00))
+        green = _low(green,0xff00)
+        green = numpy.bitwise_and(green,0xff00)
+        blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
+        blue = numpy.multiply(blue,f)
+        blue = numpy.add(blue,numpy.bitwise_and(a,0xff))
+        blue = _low(blue,0xff)
+        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+        final = numpy.bitwise_or(final,blue)
+        new = createImage(swidth,sheight,'RGB')
+        new.pixels = numpy.array(final,dtype='uint32')
+        new.updatePixels()
+        image(new,dx,dy)
+    #SUBTRACT Mode
+    if mode == 2:
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
+        red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
+        red = numpy.multiply(red,f)
+        red = numpy.subtract(numpy.bitwise_and(a,0xff0000),red)
+        red = numpy.bitwise_and(_high(red,0xff00),0xff0000)
+        green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
+        green = numpy.multiply(green,f)
+        green = numpy.subtract(numpy.bitwise_and(a,0xff00),green)
+        green = numpy.bitwise_and(_high(green,0xff),0xff00)
+        blue = numpy.multiply(numpy.bitwise_and(b,0xff),f)
+        blue = numpy.right_shift(blue,8)
+        blue = numpy.subtract(numpy.bitwise_and(a,0xff),blue)
+        blue = _high(blue,0)
+        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+        final = numpy.bitwise_or(final,blue)
+        new = createImage(swidth,sheight,'RGBA')
+        new.pixels = numpy.array(final,dtype='uint32')
+        new.updatePixels()
+        image(new,dx,dy)
+    #LIGHEST Mode
+    if mode == 4:
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
+        red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
+        red = numpy.multiply(red,f)
+        red = _high(numpy.bitwise_and(a,0xff0000),red)
+        red = numpy.bitwise_and(red,0xff0000)
+        green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
+        green = numpy.multiply(green,f)
+        green = _high(numpy.bitwise_and(a,0xff00),green)
+        green = numpy.bitwise_and(green,0xff00)
+        blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
+        blue = numpy.multiply(blue,f)
+        blue = _high(numpy.bitwise_and(a,0xff),blue)
+        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+        final = numpy.bitwise_or(final,blue)
+        new = createImage(swidth,sheight,'RGBA')
+        new.pixels = numpy.array(final,dtype='uint32')
+        new.updatePixels()
+        image(new,dx,dy)
+        
+        
+        
+        
         
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
