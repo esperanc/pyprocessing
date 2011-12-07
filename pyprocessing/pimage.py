@@ -443,6 +443,28 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.right_shift(blue,8)
         blue = numpy.subtract(numpy.bitwise_and(a,0xff),blue)
         blue = _high(blue,0)
+    #DARKEST Mode
+    elif mode == 3:
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
+        red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
+        red = numpy.multiply(red,f)
+        red = _low(numpy.bitwise_and(a,0xff0000),red)
+        red = numpy.bitwise_and(_mix(numpy.bitwise_and(a,0xff0000),red,f),0xff0000)
+        green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
+        green = numpy.multiply(green,f)
+        green = _low(numpy.bitwise_and(a,0xff00),green)
+        green = numpy.bitwise_and(_mix(numpy.bitwise_and(a,0xff00),green,f),0xff00)
+        blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
+        blue = numpy.multiply(blue,f)
+        blue = _low(numpy.bitwise_and(a,0xff),blue)
+        blue = _mix(numpy.bitwise_and(a,0xff),blue,f)
+        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
+        final = numpy.bitwise_or(final,blue)
+        new = createImage(swidth,sheight,'RGBA')
+        new.pixels = numpy.array(final,dtype='uint32')
+        new.updatePixels()
+        image(new,dx,dy)
     #LIGHEST Mode
     elif mode == 4:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
@@ -458,13 +480,49 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
         blue = numpy.multiply(blue,f)
         blue = _high(numpy.bitwise_and(a,0xff),blue)
+    #Setup for modes 5:14
+    elif mode in range(5,14):
+        ar = numpy.right_shift(numpy.bitwise_and(a,0xff0000),16)
+        ag = numpy.right_shift(numpy.bitwise_and(a,0xff00),8)    
+        ab = numpy.bitwise_and(a,0xff)        
+        br = numpy.right_shift(numpy.bitwise_and(b,0xff0000),16)
+        bg = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)    
+        bb = numpy.bitwise_and(b,0xff)
+    #DIFFERENCE Mode
+    if mode == 5:
+        cr1 = numpy.multiply(ar.__ge__(br),numpy.subtract(ar,br))
+        cr2 = numpy.multiply(ar.__lt__(br),numpy.subtract(br,ar))
+        cr = numpy.add(cr1,cr2)
+        cg1 = numpy.multiply(ag.__ge__(bg),numpy.subtract(ag,bg))
+        cg2 = numpy.multiply(ag.__lt__(bg),numpy.subtract(bg,ag))
+        cg = numpy.add(cg1,cg2)
+        cb1 = numpy.multiply(ab.__ge__(bb),numpy.subtract(ab,bb))
+        cb2 = numpy.multiply(ab.__lt__(bb),numpy.subtract(bb,ab))
+        cb = numpy.add(cb1,cb2)
+    #EXCLUSION Mode
+    elif mode == 6:
+        cr = numpy.right_shift(numpy.multiply(ar,br),7)
+        cr = numpy.subtract(numpy.add(ar,br),cr)        
+        cg = numpy.right_shift(numpy.multiply(ag,bg),7)
+        cg = numpy.subtract(numpy.add(ag,bg),cg)        
+        cb = numpy.right_shift(numpy.multiply(ab,bb),7)
+        cb = numpy.subtract(numpy.add(ab,bb),cb)
+    #Final blend for modes 5:14
+    if mode in range(5,14):
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff0000),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
+        red = numpy.right_shift(numpy.multiply(numpy.subtract(cr,ar),f),8)
+        red = _peg(numpy.left_shift(numpy.add(ar,red),16))
+        green = numpy.right_shift(numpy.multiply(numpy.subtract(cg,ag),f),8)
+        green = _peg(numpy.left_shift(numpy.add(ag,green),8))
+        blue = numpy.right_shift(numpy.multiply(numpy.subtract(cb,ab),f),8)
+        blue = _peg(numpy.add(ab,blue))
     final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
     final = numpy.bitwise_or(final,blue)
     new = createImage(swidth,sheight,'RGBA')
     new.pixels = numpy.array(final,dtype='uint32')
     new.updatePixels()
     image(new,dx,dy)
-
 
 def loadPixels():
     """Loads the data for the display window into the pixels array."""
