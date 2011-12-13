@@ -383,7 +383,7 @@ def _low(a, b):
     return numpy.add(c,d)
 
 def _peg(a):
-    #Used for the blend function (returns the matrix with the minimum bitwise values)
+    #Used for the blend function (returns the matrix with constrained values)
     b = numpy.multiply(a.__ge__(0),a)
     c = numpy.multiply(b.__lt__(255),b)
     d = numpy.multiply(b.__gt__(255),255)
