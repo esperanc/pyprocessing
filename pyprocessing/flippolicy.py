@@ -45,6 +45,7 @@ by editting the config variable in the globs submodule.
 """
 
 import pyglet
+from ctypes import *
 from pyglet.gl import *
 from fbo import FBO
 from pimage import *
