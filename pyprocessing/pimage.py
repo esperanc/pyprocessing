@@ -403,7 +403,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     #BLEND Mode
     if mode == 0:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
-        alpha = numpy.left_shift(numpy.minimum(numpy.add(alpha,f),0xff),24)
+        alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = _mix(numpy.bitwise_and(a,0xff0000),numpy.bitwise_and(b,0xff0000),f)
         red = numpy.bitwise_and(red,0xff0000)
         green = _mix(numpy.bitwise_and(a,0xff00),numpy.bitwise_and(b,0xff00),f)
@@ -433,16 +433,27 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
         red = numpy.multiply(red,f)
-        red = numpy.subtract(numpy.bitwise_and(a,0xff0000),red)
+        aux = numpy.bitwise_and(a,0xff0000)
+        aux1 = numpy.multiply(aux.__ge__(red),red)
+        aux2 = numpy.multiply(red.__gt__(aux),aux)
+        red = numpy.add(aux1,aux2)
+        red = numpy.subtract(aux,red)
         red = numpy.bitwise_and(_high(red,0xff00),0xff0000)
         green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
         green = numpy.multiply(green,f)
-        green = numpy.subtract(numpy.bitwise_and(a,0xff00),green)
+        aux = numpy.bitwise_and(a,0xff00)
+        aux1 = numpy.multiply(aux.__ge__(green),green)
+        aux2 = numpy.multiply(green.__gt__(aux),aux)
+        green = numpy.add(aux1,aux2)
+        green = numpy.subtract(aux,green)
         green = numpy.bitwise_and(_high(green,0xff),0xff00)
         blue = numpy.multiply(numpy.bitwise_and(b,0xff),f)
         blue = numpy.right_shift(blue,8)
-        blue = numpy.subtract(numpy.bitwise_and(a,0xff),blue)
-        blue = _high(blue,0)
+        aux = numpy.bitwise_and(a,0xff)
+        aux1 = numpy.multiply(aux.__ge__(blue),blue)
+        aux2 = numpy.multiply(blue.__gt__(aux),aux)
+        blue = numpy.add(aux1,aux2)
+        blue = numpy.subtract(aux,blue)
     #DARKEST Mode
     elif mode == 3:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
@@ -481,7 +492,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.multiply(blue,f)
         blue = _high(numpy.bitwise_and(a,0xff),blue)
     #Setup for modes 5:14
-    elif mode in range(5,14):
+    if mode in range(5,14):
         ar = numpy.right_shift(numpy.bitwise_and(a,0xff0000),16)
         ag = numpy.right_shift(numpy.bitwise_and(a,0xff00),8)    
         ab = numpy.bitwise_and(a,0xff)        
@@ -610,12 +621,12 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         cb = numpy.subtract(255,_peg(numpy.divide(cb,bb)))
     #Final blend for modes 5:14
     if mode in range(5,14):
-        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff0000),24)
+        alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.multiply(numpy.subtract(cr,ar),f),8)
-        red = _peg(numpy.left_shift(numpy.add(ar,red),16))
+        red = numpy.left_shift(_peg(numpy.add(ar,red)),16)        
         green = numpy.right_shift(numpy.multiply(numpy.subtract(cg,ag),f),8)
-        green = _peg(numpy.left_shift(numpy.add(ag,green),8))
+        green = numpy.left_shift(_peg(numpy.add(ag,green)),8)
         blue = numpy.right_shift(numpy.multiply(numpy.subtract(cb,ab),f),8)
         blue = _peg(numpy.add(ab,blue))
     final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
