@@ -367,7 +367,7 @@ def screenFilter(mode,*args):
     
 def _mix(a, b, f):
     #Used for the blend function (mixes colors according to their alpha values)
-    c = numpy.multiply(numpy.subtract(b,a),f)
+    c = numpy.multiply(_sub(b,a),f)
     return numpy.add(numpy.right_shift(c,8),a)
 
 def _high(a, b):
@@ -389,17 +389,27 @@ def _peg(a):
     d = numpy.multiply(b.__gt__(255),255)
     return numpy.add(c,d)
 
+def _sub(a,b):
+    #Used for the blend function (mimics an unsigned subtraction with signed arrays)
+    aux = a
+    aux1 = numpy.multiply(aux.__ge__(b),b)
+    aux2 = numpy.multiply(b.__gt__(aux),aux)
+    b = numpy.add(aux1,aux2)
+    return numpy.subtract(aux,b)
+
 def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     """Blends a region of pixels from one image into another."""
     if not npy: raise ImportError, "Numpy is required"
-    a = source.pixels.reshape((source.height,source.width))
-    a = a[y:y+sheight,x:x+swidth]
-    a = a.reshape(a.shape[1]*a.shape[0])
     loadPixels()
-    b = screen.pixels.reshape((height,width))
-    b = b[dy:dy+dheight,dx:dx+dwidth]
+    a = screen.pixels.reshape((height,width))
+    a = a[dy:dy+dheight,dx:dx+dwidth]
+    a = a.reshape(a.shape[1]*a.shape[0])
+    b = source.pixels.reshape((source.height,source.width))
+    b = b[y:y+sheight,x:x+swidth]
     b = b.reshape(b.shape[1]*b.shape[0])
-    f = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
+    #a.dtype = "int32"
+    #b.dtype = "int32"
+    f = numpy.right_shift(numpy.bitwise_and(b,0xff000000),24)
     #BLEND Mode
     if mode == 0:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
@@ -413,18 +423,18 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     elif mode == 1:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
-        red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
-        red = numpy.multiply(red,f)
+        red = numpy.bitwise_and(b,0xff0000)
+        red = numpy.right_shift(numpy.multiply(red,f),8)
         red = numpy.add(red,numpy.bitwise_and(a,0xff0000))
         red = _low(red,0xff0000)
         red = numpy.bitwise_and(red,0xff0000)
-        green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
-        green = numpy.multiply(green,f)
+        green = numpy.bitwise_and(b,0xff00)
+        green = numpy.right_shift(numpy.multiply(green,f),8)
         green = numpy.add(green,numpy.bitwise_and(a,0xff00))
         green = _low(green,0xff00)
         green = numpy.bitwise_and(green,0xff00)
-        blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
-        blue = numpy.multiply(blue,f)
+        blue = numpy.bitwise_and(b,0xff)
+        blue = numpy.right_shift(numpy.multiply(blue,f),8)
         blue = numpy.add(blue,numpy.bitwise_and(a,0xff))
         blue = _low(blue,0xff)
     #SUBTRACT Mode
@@ -433,28 +443,16 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.bitwise_and(b,0xff0000),8)
         red = numpy.multiply(red,f)
-        aux = numpy.bitwise_and(a,0xff0000)
-        aux1 = numpy.multiply(aux.__ge__(red),red)
-        aux2 = numpy.multiply(red.__gt__(aux),aux)
-        red = numpy.add(aux1,aux2)
-        red = numpy.subtract(aux,red)
+        red = _sub(numpy.bitwise_and(a,0xff0000),red)
         red = numpy.bitwise_and(_high(red,0xff00),0xff0000)
         green = numpy.right_shift(numpy.bitwise_and(b,0xff00),8)
         green = numpy.multiply(green,f)
-        aux = numpy.bitwise_and(a,0xff00)
-        aux1 = numpy.multiply(aux.__ge__(green),green)
-        aux2 = numpy.multiply(green.__gt__(aux),aux)
-        green = numpy.add(aux1,aux2)
-        green = numpy.subtract(aux,green)
+        green = _sub(numpy.bitwise_and(a,0xff00),green)
         green = numpy.bitwise_and(_high(green,0xff),0xff00)
         blue = numpy.multiply(numpy.bitwise_and(b,0xff),f)
         blue = numpy.right_shift(blue,8)
-        aux = numpy.bitwise_and(a,0xff)
-        aux1 = numpy.multiply(aux.__ge__(blue),blue)
-        aux2 = numpy.multiply(blue.__gt__(aux),aux)
-        blue = numpy.add(aux1,aux2)
-        blue = numpy.subtract(aux,blue)
-    #DARKEST Mode
+        blue = _sub(numpy.bitwise_and(a,0xff),blue)
+    #DARKEST Mode (to fix)
     elif mode == 3:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
@@ -466,16 +464,10 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         green = numpy.multiply(green,f)
         green = _low(numpy.bitwise_and(a,0xff00),green)
         green = numpy.bitwise_and(_mix(numpy.bitwise_and(a,0xff00),green,f),0xff00)
-        blue = numpy.right_shift(numpy.bitwise_and(b,0xff),8)
-        blue = numpy.multiply(blue,f)
+        blue = numpy.bitwise_and(b,0xff)
+        blue = numpy.right_shift(numpy.multiply(blue,f),8)
         blue = _low(numpy.bitwise_and(a,0xff),blue)
         blue = _mix(numpy.bitwise_and(a,0xff),blue,f)
-        final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
-        final = numpy.bitwise_or(final,blue)
-        new = createImage(swidth,sheight,'RGBA')
-        new.pixels = numpy.array(final,dtype='uint32')
-        new.updatePixels()
-        image(new,dx,dy)
     #LIGHEST Mode
     elif mode == 4:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
@@ -501,23 +493,23 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         bb = numpy.bitwise_and(b,0xff)
     #DIFFERENCE Mode
     if mode == 5:
-        cr1 = numpy.multiply(ar.__ge__(br),numpy.subtract(ar,br))
-        cr2 = numpy.multiply(ar.__lt__(br),numpy.subtract(br,ar))
+        cr1 = numpy.multiply(ar.__ge__(br),_sub(ar,br))
+        cr2 = numpy.multiply(ar.__lt__(br),_sub(br,ar))
         cr = numpy.add(cr1,cr2)
-        cg1 = numpy.multiply(ag.__ge__(bg),numpy.subtract(ag,bg))
-        cg2 = numpy.multiply(ag.__lt__(bg),numpy.subtract(bg,ag))
+        cg1 = numpy.multiply(ag.__ge__(bg),_sub(ag,bg))
+        cg2 = numpy.multiply(ag.__lt__(bg),_sub(bg,ag))
         cg = numpy.add(cg1,cg2)
-        cb1 = numpy.multiply(ab.__ge__(bb),numpy.subtract(ab,bb))
-        cb2 = numpy.multiply(ab.__lt__(bb),numpy.subtract(bb,ab))
+        cb1 = numpy.multiply(ab.__ge__(bb),_sub(ab,bb))
+        cb2 = numpy.multiply(ab.__lt__(bb),_sub(bb,ab))
         cb = numpy.add(cb1,cb2)
     #EXCLUSION Mode
     elif mode == 6:
         cr = numpy.right_shift(numpy.multiply(ar,br),7)
-        cr = numpy.subtract(numpy.add(ar,br),cr)        
+        cr = _sub(numpy.add(ar,br),cr)        
         cg = numpy.right_shift(numpy.multiply(ag,bg),7)
-        cg = numpy.subtract(numpy.add(ag,bg),cg)        
+        cg = _sub(numpy.add(ag,bg),cg)        
         cb = numpy.right_shift(numpy.multiply(ab,bb),7)
-        cb = numpy.subtract(numpy.add(ab,bb),cb)
+        cb = _sub(numpy.add(ab,bb),cb)
     #MULTIPLY Mode
     elif mode == 7:
         cr = numpy.right_shift(numpy.multiply(ar,br),8)  
