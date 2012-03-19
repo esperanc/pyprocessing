@@ -371,6 +371,7 @@ def mix(a, b, f):
     
 def _mix(a, b, f):
     #Used for the blend function (mixes colors according to their alpha values)
+    print f
     c = numpy.multiply(numpy.subtract(b,a),f)
     return numpy.add(numpy.right_shift(c,8),a)
 
@@ -576,17 +577,17 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         cr1 = numpy.right_shift(cr1,15)
         cr2 = numpy.right_shift(numpy.multiply(ar,ar),8)
         cr3 = numpy.right_shift(numpy.multiply(ar,br),7)
-        cr = numpy.add(cr1,numpy.subtract(cr2,cr3))
+        cr = numpy.add(cr3,numpy.subtract(cr2,cr1))
         cg1 = numpy.multiply(numpy.multiply(ag,ag),bg)
         cg1 = numpy.right_shift(cg1,15)
         cg2 = numpy.right_shift(numpy.multiply(ag,ag),8)
         cg3 = numpy.right_shift(numpy.multiply(ag,bg),7)
-        cg = numpy.add(cg1,numpy.subtract(cg2,cg3))
+        cg = numpy.add(cg3,numpy.subtract(cg2,cg1))
         cb1 = numpy.multiply(numpy.multiply(ab,ab),bb)
         cb1 = numpy.right_shift(cb1,15)
         cb2 = numpy.right_shift(numpy.multiply(ab,ab),8)
         cb3 = numpy.right_shift(numpy.multiply(ab,bb),7)
-        cb = numpy.add(cb1,numpy.subtract(cb2,cb3))        
+        cb = numpy.add(cb3,numpy.subtract(cb2,cb1))        
     #DODGE Mode
     elif mode == 12:
         cr1 = numpy.multiply(br.__eq__(255),255)
@@ -605,19 +606,22 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     elif mode == 13:
         cr = numpy.left_shift(numpy.subtract(255,ar),8)
         cr = numpy.subtract(255,_peg(numpy.divide(cr,br)))
+        cr = numpy.multiply(cr,br.__gt__(0))
         cg = numpy.left_shift(numpy.subtract(255,ag),8)
         cg = numpy.subtract(255,_peg(numpy.divide(cg,bg)))
+        cg = numpy.multiply(cg,bg.__gt__(0))
         cb = numpy.left_shift(numpy.subtract(255,ab),8)
         cb = numpy.subtract(255,_peg(numpy.divide(cb,bb)))
+        cb = numpy.multiply(cb,bb.__gt__(0))
     #Final blend for modes 5:14
     if mode in range(5,14):
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
-        red = numpy.right_shift(numpy.multiply(_sub(cr,ar),f),8)
+        red = numpy.right_shift(numpy.multiply(numpy.subtract(cr,ar),f),8)
         red = numpy.left_shift(_peg(numpy.add(ar,red)),16)
-        green = numpy.right_shift(numpy.multiply(_sub(cg,ag),f),8)
+        green = numpy.right_shift(numpy.multiply(numpy.subtract(cg,ag),f),8)
         green = numpy.left_shift(_peg(numpy.add(ag,green)),8)
-        blue = numpy.right_shift(numpy.multiply(_sub(cb,ab),f),8)
+        blue = numpy.right_shift(numpy.multiply(numpy.subtract(cb,ab),f),8)
         blue = _peg(numpy.add(ab,blue))
     final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
     final = numpy.bitwise_or(final,blue)

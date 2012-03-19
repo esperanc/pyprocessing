@@ -215,7 +215,6 @@ def blend_sub_pin(a, b):
 def blend_lightest(a, b):
     """Only returns the blended lightest colour """
     f = (b & ALPHA_MASK) >> 24;
-
     return (low(((a & ALPHA_MASK) >> 24) + f, 0xff) << 24 |
             high(a & RED_MASK, ((b & RED_MASK) >> 8) * f) & RED_MASK |
             high(a & GREEN_MASK, ((b & GREEN_MASK) >> 8) * f) & GREEN_MASK |
@@ -224,7 +223,6 @@ def blend_lightest(a, b):
 def blend_darkest(a, b):
     """Only returns the blended darkest colour """
     f = (b & ALPHA_MASK) >> 24;
-
     return (low(((a & ALPHA_MASK) >> 24) + f, 0xff) << 24 |
             mix(a & RED_MASK,
                 low(a & RED_MASK,
@@ -452,7 +450,7 @@ def blend_burn(a, b):
             (peg(ab + (((cb - ab) * f) >> 8)) ) );
 
 # This array maps the blending modes to the proper color blending functions
-blendfunc = [blend_blend, blend_add_pin, blend_sub_pin, blend_lightest, blend_darkest,
+blendfunc = [blend_blend, blend_add_pin, blend_sub_pin, blend_darkest, blend_lightest,
              blend_difference, blend_exclusion, blend_multiply, blend_screen, blend_overlay, 
              blend_hard_light, blend_soft_light, blend_dodge, blend_burn]
 
