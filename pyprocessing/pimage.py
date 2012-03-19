@@ -365,9 +365,13 @@ def screenFilter(mode,*args):
     new.updatePixels()
     image(new,0,0)
     
+    
+def mix(a, b, f): 
+    return a + (((b - a) * f) >> 8);
+    
 def _mix(a, b, f):
     #Used for the blend function (mixes colors according to their alpha values)
-    c = numpy.multiply(_sub(b,a),f)
+    c = numpy.multiply(numpy.subtract(b,a),f)
     return numpy.add(numpy.right_shift(c,8),a)
 
 def _high(a, b):
@@ -407,9 +411,9 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     b = source.pixels.reshape((source.height,source.width))
     b = b[y:y+sheight,x:x+swidth]
     b = b.reshape(b.shape[1]*b.shape[0])
-    #a.dtype = "int32"
-    #b.dtype = "int32"
     f = numpy.right_shift(numpy.bitwise_and(b,0xff000000),24)
+    a.dtype="int32"
+    b.dtype="int32"
     #BLEND Mode
     if mode == 0:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
@@ -452,7 +456,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         blue = numpy.multiply(numpy.bitwise_and(b,0xff),f)
         blue = numpy.right_shift(blue,8)
         blue = _sub(numpy.bitwise_and(a,0xff),blue)
-    #DARKEST Mode (to fix)
+    #DARKEST Mode
     elif mode == 3:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
@@ -464,11 +468,11 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         green = numpy.multiply(green,f)
         green = _low(numpy.bitwise_and(a,0xff00),green)
         green = numpy.bitwise_and(_mix(numpy.bitwise_and(a,0xff00),green,f),0xff00)
-        blue = numpy.bitwise_and(b,0xff)
-        blue = numpy.right_shift(numpy.multiply(blue,f),8)
+        blue = numpy.multiply(numpy.bitwise_and(b,0xff),f)
+        blue = numpy.right_shift(blue,8)
         blue = _low(numpy.bitwise_and(a,0xff),blue)
         blue = _mix(numpy.bitwise_and(a,0xff),blue,f)
-    #LIGHEST Mode
+    #LIGHTEST Mode
     elif mode == 4:
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
@@ -615,11 +619,11 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
     if mode in range(5,14):
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
-        red = numpy.right_shift(numpy.multiply(numpy.subtract(cr,ar),f),8)
+        red = numpy.right_shift(numpy.multiply(_sub(cr,ar),f),8)
         red = numpy.left_shift(_peg(numpy.add(ar,red)),16)        
-        green = numpy.right_shift(numpy.multiply(numpy.subtract(cg,ag),f),8)
+        green = numpy.right_shift(numpy.multiply(_sub(cg,ag),f),8)
         green = numpy.left_shift(_peg(numpy.add(ag,green)),8)
-        blue = numpy.right_shift(numpy.multiply(numpy.subtract(cb,ab),f),8)
+        blue = numpy.right_shift(numpy.multiply(_sub(cb,ab),f),8)
         blue = _peg(numpy.add(ab,blue))
     final = numpy.bitwise_or(numpy.bitwise_or(alpha,red),green)
     final = numpy.bitwise_or(final,blue)

@@ -235,7 +235,7 @@ def blend_darkest(a, b):
             mix(a & BLUE_MASK,
                 low(a & BLUE_MASK,
                     ((b & BLUE_MASK) * f) >> 8), f));
-
+            
 def blend_difference(a, b):
     """ returns the absolute value of the difference of the input colors
     C = |A - B|"""
