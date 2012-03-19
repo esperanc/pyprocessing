@@ -389,7 +389,7 @@ def _low(a, b):
 def _peg(a):
     #Used for the blend function (returns the matrix with constrained values)
     b = numpy.multiply(a.__ge__(0),a)
-    c = numpy.multiply(b.__lt__(255),b)
+    c = numpy.multiply(b.__le__(255),b)
     d = numpy.multiply(b.__gt__(255),255)
     return numpy.add(c,d)
 
