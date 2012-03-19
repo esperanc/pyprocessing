@@ -11,6 +11,7 @@ from colors import _getColor,color,blue
 try:
     import numpy
     npy = True
+    numpy.seterr(divide='ignore')
 except:
     npy = False
 
@@ -371,7 +372,6 @@ def mix(a, b, f):
     
 def _mix(a, b, f):
     #Used for the blend function (mixes colors according to their alpha values)
-    print f
     c = numpy.multiply(numpy.subtract(b,a),f)
     return numpy.add(numpy.right_shift(c,8),a)
 
