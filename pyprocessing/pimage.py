@@ -497,15 +497,9 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         bb = numpy.bitwise_and(b,0xff)
     #DIFFERENCE Mode
     if mode == 5:
-        cr1 = numpy.multiply(ar.__ge__(br),_sub(ar,br))
-        cr2 = numpy.multiply(ar.__lt__(br),_sub(br,ar))
-        cr = numpy.add(cr1,cr2)
-        cg1 = numpy.multiply(ag.__ge__(bg),_sub(ag,bg))
-        cg2 = numpy.multiply(ag.__lt__(bg),_sub(bg,ag))
-        cg = numpy.add(cg1,cg2)
-        cb1 = numpy.multiply(ab.__ge__(bb),_sub(ab,bb))
-        cb2 = numpy.multiply(ab.__lt__(bb),_sub(bb,ab))
-        cb = numpy.add(cb1,cb2)
+        cr = numpy.absolute(numpy.subtract(ar,br))
+        cg = numpy.absolute(numpy.subtract(ag,bg))
+        cb = numpy.absolute(numpy.subtract(ab,bb))
     #EXCLUSION Mode
     elif mode == 6:
         cr = numpy.right_shift(numpy.multiply(ar,br),7)
@@ -620,7 +614,7 @@ def blend(source, x, y, swidth, sheight, dx, dy, dwidth, dheight, mode):
         alpha = numpy.right_shift(numpy.bitwise_and(a,0xff000000),24)
         alpha = numpy.left_shift(_low(numpy.add(alpha,f),0xff),24)
         red = numpy.right_shift(numpy.multiply(_sub(cr,ar),f),8)
-        red = numpy.left_shift(_peg(numpy.add(ar,red)),16)        
+        red = numpy.left_shift(_peg(numpy.add(ar,red)),16)
         green = numpy.right_shift(numpy.multiply(_sub(cg,ag),f),8)
         green = numpy.left_shift(_peg(numpy.add(ag,green)),8)
         blue = numpy.right_shift(numpy.multiply(_sub(cb,ab),f),8)

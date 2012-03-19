@@ -273,8 +273,7 @@ def blend_exclusion(a, b):
     cr = ar + br - ((ar * br) >> 7);
     cg = ag + bg - ((ag * bg) >> 7);
     cb = ab + bb - ((ab * bb) >> 7);
-
-    # alpha blend (this portion will always be the same)
+    
     return (low(((a & ALPHA_MASK) >> 24) + f, 0xff) << 24 |
             (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
             (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
@@ -453,9 +452,9 @@ def blend_burn(a, b):
             (peg(ab + (((cb - ab) * f) >> 8)) ) );
 
 # This array maps the blending modes to the proper color blending functions
-blendfunc = [blend_blend, blend_add_pin, blend_sub_pin, blend_darkest, blend_lightest,
-             blend_exclusion, blend_multiply, blend_screen, blend_overlay, 
-             blend_hard_light, blend_soft_light, blend_burn]
+blendfunc = [blend_blend, blend_add_pin, blend_sub_pin, blend_lightest, blend_darkest,
+             blend_difference, blend_exclusion, blend_multiply, blend_screen, blend_overlay, 
+             blend_hard_light, blend_soft_light, blend_dodge, blend_burn]
 
 def blendColor(c1, c2, MODE):
     """Implements the blending of two colors. MODE is one of the blend mode
