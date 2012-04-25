@@ -280,6 +280,7 @@ class PImage (object):
             numpy.putmask(colOut,lumDown<currLum,colDown)
             numpy.putmask(currLum,lumDown<currLum,lumDown)
             self.pixels = colOut
+        self.updatePixels()
 
     def mask(self,image):
         """Uses the image passed as parameter as alpha mask."""
@@ -757,7 +758,6 @@ def _createKernel2d(sigma,size):
     #Creates a two dimensional gaussian kernel of determined size
     global weights
     weights = numpy.empty([size,size])
-    print weights.shape
     norm = 1.0/(math.pi*2.0*sigma*sigma)
     for j in range(-size/2,size/2 + 1):
         for i in range(-size/2,size/2 + 1):
