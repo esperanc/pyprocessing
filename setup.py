@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-import ez_setup
-ez_setup.use_setuptools()
+from distutils.core import setup
 
-from setuptools import setup, find_packages
-from pyprocessing import constants
+def get_version():
+    from os.path import dirname, join
+    for line in open(join(dirname(__file__), 'pyprocessing/constants.py')):
+        if 'version' in line:
+            version = line.split('"')[1]
+    return version
 
 long_description = '''
 This Python package provides an environment for graphics applications that 
@@ -24,7 +27,7 @@ so is pyprocessing.
 # MAKE SURE THE VERSION BELOW IS THE SAME AS THAT IN CONSTANTS.PY!
 
 setup(name='pyprocessing',
-      version=constants.version,
+      version=get_version(),
       description='A Processing-like environment for Python',
       long_description=long_description,
       author='Claudio Esperanca',
@@ -32,5 +35,6 @@ setup(name='pyprocessing',
       url='http://code.google.com/p/pyprocessing/',
       license='BSD',
       packages=['pyprocessing'],
+      install_requires = ["pyglet>=1.1.4"],
      )
 

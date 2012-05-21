@@ -184,7 +184,6 @@ class PImage (object):
             #Checks the pixels directly above, under and to the left and right
             #of each pixel of the image. If it has a greater luminosity, then
             #the center pixel receives its color
-            out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
             colLeft = numpy.roll(colorOrig,1)
@@ -234,7 +233,6 @@ class PImage (object):
             #Checks the pixels directly above, under and to the left and right
             #of each pixel of the image. If it has a lesser luminosity, then
             #the center pixel receives its color
-            out = numpy.empty(self.width*self.height)
             colorOrig = numpy.array(self.pixels)
             colOut = numpy.array(self.pixels)
             colLeft = numpy.roll(colorOrig,1)

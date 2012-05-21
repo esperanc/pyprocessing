@@ -74,7 +74,6 @@ def endShape(close=False):
         if attrib.textureMode == IMAGE:
             normx = image.width
             normy = image.height
-            print normx, normy
         elif attrib.textureMode == NORMALIZED:
             normx = normy = 1.0
         if shape.type: glBegin(shape.type)

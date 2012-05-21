@@ -148,11 +148,15 @@ def rect(x,y,width,height):
     if attrib.strokeColor != None:
         glLineWidth (attrib.strokeWeight)
         glColor4f(*attrib.strokeColor)
-        glBegin(GL_LINE_LOOP)
-        glVertex2f(x,y)
-        glVertex2f(x+width,y)
-        glVertex2f(x+width,y+height)
-        glVertex2f(x,y+height)
+        glBegin(GL_LINES)
+        glVertex2f(x-attrib.strokeWeight,y-attrib.strokeWeight/2.0)
+        glVertex2f(x+width+attrib.strokeWeight,y-attrib.strokeWeight/2.0)
+        glVertex2f(x+width+attrib.strokeWeight/2.0,y)
+        glVertex2f(x+width+attrib.strokeWeight/2.0,y+height)
+        glVertex2f(x+width+attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
+        glVertex2f(x-attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
+        glVertex2f(x-attrib.strokeWeight/2.0,y+height)
+        glVertex2f(x-attrib.strokeWeight/2.0,y)
         glEnd()
 
 def quad(x0,y0,x1,y1,x2,y2,x3,y3):
