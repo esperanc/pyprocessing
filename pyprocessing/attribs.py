@@ -10,7 +10,7 @@ import config
 
 __all__=['stroke', 'noStroke', 'strokeWeight', 'fill', 'noFill', 'tint', 'noTint',
          'smooth', 'noSmooth', 'ellipseMode', 'rectMode', 'imageMode', 'hint',
-         'texture', 'textureMode']
+         'texture', 'textureMode', 'strokeJoin', 'strokeCap']
          
 def stroke(*color):
     """Sets color as color for drawing lines and shape borders."""
@@ -24,6 +24,12 @@ def strokeWeight (weight):
     """Sets line width for drawing outline objects"""
     if weight<=0: weight=0.001
     attrib.strokeWeight = weight
+
+def strokeCap(mode):
+    attrib.strokeCap = mode
+
+def strokeJoin(mode):
+    attrib.strokeJoin = mode
     
 def fill(*color):
     """Sets color as color for drawing filled shapes."""

@@ -47,6 +47,8 @@ class screen:
     
 class attrib:
     """Drawing attributes"""
+    strokeJoin = MITER
+    strokeCap = SQUARE
     textureMode = IMAGE
     strokeColor = (0,0,0,1)
     fillColor = (1,1,1,1)

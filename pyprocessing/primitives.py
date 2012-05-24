@@ -148,15 +148,59 @@ def rect(x,y,width,height):
     if attrib.strokeColor != None:
         glLineWidth (attrib.strokeWeight)
         glColor4f(*attrib.strokeColor)
-        glBegin(GL_LINES)
-        glVertex2f(x-attrib.strokeWeight,y-attrib.strokeWeight/2.0)
-        glVertex2f(x+width+attrib.strokeWeight,y-attrib.strokeWeight/2.0)
-        glVertex2f(x+width+attrib.strokeWeight/2.0,y)
-        glVertex2f(x+width+attrib.strokeWeight/2.0,y+height)
-        glVertex2f(x+width+attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
-        glVertex2f(x-attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
-        glVertex2f(x-attrib.strokeWeight/2.0,y+height)
-        glVertex2f(x-attrib.strokeWeight/2.0,y)
+        if attrib.strokeJoin == MITER:
+            glBegin(GL_LINES)
+            glVertex2f(x-attrib.strokeWeight,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width+attrib.strokeWeight,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x+width+attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x-attrib.strokeWeight,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x-attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x-attrib.strokeWeight/2.0,y)
+        elif attrib.strokeJoin == BEVEL:
+            w,f,s = attrib.strokeWeight,attrib.fillColor,attrib.strokeColor
+            noStroke()
+            fill(s)
+            triangle(x,y,x,y-w,x-w,y)
+            triangle(x+width,y,x+width+w,y,x+width,y-w)
+            triangle(x+width,y+height,x+width+w,y+height,x+width,y+height+w)
+            triangle(x,y+height,x-w,y+height,x,y+height+w)
+            attrib.strokeColor = s
+            attrib.fillColor = f
+            attrib.strokeWeight = w
+            glBegin(GL_LINES)
+            glVertex2f(x,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x+width,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x-attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x-attrib.strokeWeight/2.0,y) 
+        else:
+            w,f,s = attrib.strokeWeight,attrib.fillColor,attrib.strokeColor
+            e = attrib.ellipseMode
+            noStroke()
+            fill(s)
+            attrib.ellipseMode = CENTER
+            arc(x,y+height,w*2,w*2,PI/2,PI)
+            arc(x+width,y+height,w*2,w*2,0,PI/2)
+            arc(x,y,w*2,w*2,PI,3*PI/2)
+            arc(x+width,y,w*2,w*2,3*PI/2,2*PI)
+            attrib.ellipseMode = e
+            attrib.strokeColor = s
+            attrib.fillColor = f
+            attrib.strokeWeight = w
+            glBegin(GL_LINES)
+            glVertex2f(x,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width,y-attrib.strokeWeight/2.0)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y)
+            glVertex2f(x+width+attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x+width,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x,y+height+attrib.strokeWeight/2.0)
+            glVertex2f(x-attrib.strokeWeight/2.0,y+height)
+            glVertex2f(x-attrib.strokeWeight/2.0,y) 
         glEnd()
 
 def quad(x0,y0,x1,y1,x2,y2,x3,y3):
@@ -224,11 +268,45 @@ def line(*coords):
     if attrib.strokeColor != None:
         glColor4f(*attrib.strokeColor)
         glLineWidth(attrib.strokeWeight)
-        glBegin(GL_LINES)
         if len(p1)==2:
-            glVertex2f(*p1)
-            glVertex2f(*p2)
+            if attrib.strokeCap == ROUND:
+                if p2[0] == p1[0]: angle = 0
+                else:
+                    m = float(p2[1]-p1[1])/(p2[0]-p1[0])
+                    angle = math.atan(m)-PI/2
+                if p2[0]<p1[0]: angle = angle+PI
+                w,f,s = attrib.strokeWeight,attrib.fillColor,attrib.strokeColor
+                e = attrib.ellipseMode
+                noStroke()
+                fill(s)
+                attrib.ellipseMode = CENTER
+                arc(p1[0],p1[1],w,w,angle,angle-PI)
+                arc(p2[0],p2[1],w,w,angle,angle+PI)
+                attrib.ellipseMode = e
+                attrib.fillColor = f
+                attrib.strokeWeight = w
+                attrib.strokeColor = s
+                glBegin(GL_LINES)
+                glVertex2f(*p1)
+                glVertex2f(*p2)
+            elif attrib.strokeCap == PROJECT:
+                if p2[0] == p1[0]:
+                    x = 0
+                    y = attrib.strokeWeight/2.0
+                else:
+                    m = float(p2[1]-p1[1])/(p2[0]-p1[0])
+                    x = attrib.strokeWeight/(2*math.sqrt(1+m**2))
+                    if p2[0]<p1[0]: x = -x
+                    y = x*m
+                glBegin(GL_LINES)
+                glVertex2f(p1[0]-x,p1[1]-y)
+                glVertex2f(p2[0]+x,p2[1]+y)
+            else:
+                glBegin(GL_LINES)
+                glVertex2f(*p1)
+                glVertex2f(*p2)
         else:
+            glBegin(GL_LINES)
             glVertex3f(*p1)
             glVertex3f(*p2)
         glEnd()
