@@ -1,5 +1,5 @@
 from math import sqrt
-import new
+import types
 
 __all__ = ['PVector']
 
@@ -22,8 +22,8 @@ class overload(object):
     def __get__(self, instance, cls):
         if instance is None:
             clsmethod = getattr(cls.__class__, self.method.__name__)
-            return new.instancemethod(clsmethod, cls, cls.__class__)
-        return new.instancemethod(self.method, instance, cls)
+            return types.MethodType(clsmethod, cls, cls.__class__)
+        return types.MethodType(self.method, instance, cls)
 
 class PVector(list):
     """A vector class that mimics Processing's PVector class."""
