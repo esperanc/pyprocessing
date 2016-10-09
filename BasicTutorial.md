@@ -1,4 +1,4 @@
-> Pyprocessing Tutorial
+# Pyprocessing Tutorial
 
 
 
@@ -41,7 +41,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex.jpg)
 
 All you have to do is run it (either with "python helloworld.py" in Linux systems, or by double-clicking in Windows).
 Now let's understand what each line of code does:
@@ -98,7 +98,7 @@ triangle(10,10,100,0,0,100)
 ```
 will draw a triangle with the vertices (10,10), (100,0) and (0,100).
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex2.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex2.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex2.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex2.jpg)
 
 We also have rect(), which receives 4 numbers (the first two represent a point location, and the latter two the horizontal and vertical size of the square), and draws a square. The point represents the location of the upper left corner, meaning that the square is drawn from left to right and up to down, starting at the location defined by the first two numbers. For example,
 ```
@@ -106,21 +106,21 @@ rect(20,50,100,80)
 ```
 will draw a square ranging from pixels 20 to 120 in the x axis, and from pixels 50 to 130 in the y axis.
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex3.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex3.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex3.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex3.jpg)
 
 The quad() receives 8 numbers which represent 4 coordinates, and then draws a quadrilateral with the 4 vertices at those coordinates. As example we have
 ```
 quad(30,10,100,10,80,50,10,50)
 ```
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex4.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex4.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex4.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex4.jpg)
 
 Most circular shapes can be drawn with the ellipse() function. It receives 4 numbers, where the first two indicate the location of the ellipse (a coordinate representing its center) and the latter two its horizontal and vertical sizes. An ellipse with equal horizontal and vertical sizes is actually a circle. We have for example
 ```
 ellipse(100,40,60,30)
 ```
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex5.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex5.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex5.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex5.jpg)
 
 Finally, we have arc(), which is used to draw parts of ellipses (or circles). Its usage is similar to ellipse(), but it receives two angles which represent the start and the end of the arc. Here, the angle 0 represents a vector pointing down, while PI/2 represents a vector pointing to the right, and finally PI represents a vector pointing up.
 ```
@@ -128,7 +128,7 @@ arc(100,100,60,30,0,PI)
 ```
 Don't panic if you couldn't understand arc() right now: it'll be covered in other sections and examples.
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex6.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex6.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex6.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex6.jpg)
 
 Pyprocessing also gives you two attributes that can help you drawing your primitives. They are "width" and "height", and they are equal to the horizontal and vertical size of the window, respectively. So if you
 call
@@ -137,7 +137,7 @@ line(20,50,width,50)
 ```
 you'll always draw a line starting at (20,50) headed all the way to the right end of the window.
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex7.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex7.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex7.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex7.jpg)
 
 
 
@@ -158,7 +158,7 @@ Now, we represent all "non-pure" colors by indicating how much red, blue and gre
 
 All colors that have equal R, G and B channels are "grey" colors and can be represented by only one number. For example, the color represented only by the number 100 actually has R,G,B = 100,100,100 and is a tone of grey. Intuitively, the color 0 indicates black while 255 indicates white (both are "grey" colors).
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex8.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex8.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex8.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex8.jpg)
 
 Remember that there is absolutely no need to remember the RGB values for a lot of colors: there are plenty of charts avaliable on the internet that have a fairly big list of colors and their corresponding RGB values.
 
@@ -177,7 +177,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex9.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex9.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex9.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex9.jpg)
 
 The second function covered in this section is used to indicate the color of a geometric shape that you want to draw. This function is called fill() and its usage is very similar to background(), as it only receives a color. It is important to remember that if you call fill() indicating that you want your geometric shapes to be, for example,
 purple, then all your future drawings will be purple until you call fill() again. If you only want to draw one red shape and all others to be white, then you need to call fill(255,0,0) before drawing the shape and fill(255) after it. Here's an example that shows this:
@@ -194,7 +194,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex10.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex10.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex10.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex10.jpg)
 
 Lastly, we have the stroke() function, which works exactly as fill(), but instead of changing the color of the interior of the shape, it changes the color of its border. Check this simple example to fully understand how it works:
 
@@ -206,7 +206,7 @@ rect(20,20,20,20)
 run()
 ```
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex11.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex11.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex11.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex11.jpg)
 
 Let's then see an example of the alpha channel in use. Here we'll use the color (255,0,0,200), which is a bit transparent pure red color, to draw a square after setting the background to pure non-transparent green, or (0,255,0). The result is that the red is mixed a little with the green color, just like if you got a semi-transparent red paper and looked to a green wall throught it.
 
@@ -220,7 +220,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex12.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex12.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex12.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex12.jpg)
 
 To end this section, let's see an example that uses all the three new functions and several forms of representing a color.
 
@@ -241,7 +241,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex13.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex13.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex13.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex13.jpg)
 
 
 
@@ -265,7 +265,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex14.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex14.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex14.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex14.jpg)
 
 The strokeCap() function is used to indicate how you want the start and end of your lines to be drawn, and doesn't affect borders (since they don't have start or end). Instead of receiving a number, they can receive any of the three modes avaliable, which are PROJECT, ROUND and SQUARE (where SQUARE is the default). In this example you can see how each mode affects the cap of a line.
 
@@ -283,7 +283,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex15.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex15.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex15.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex15.jpg)
 
 Lastly, the strokeJoin() is used to indicate how you want the joints of the lines that define a shape's border to be drawn. Like strokeCap(), it can receive three modes, which are MITER, BEVEL and ROUND (MITER being the default). Here's an example that shows each mode.
 
@@ -302,7 +302,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex16.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex16.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex16.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex16.jpg)
 
 
 
@@ -346,7 +346,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex17.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex17.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex17.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex17.jpg)
 
 This application doesn't do anything new apparently, right? That's because we don't have anything that changes yet, which will be shown next. Right now, the above example does exactly what the code below does, but the only difference is that it keeps redrawing the dark red background and the line over and over - this obviously can't be noticed since we're drawing the same thing above itself.
 
@@ -661,7 +661,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex18.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex18.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex18.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex18.jpg)
 
 We used
 ```
@@ -697,7 +697,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex19.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex19.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex19.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex19.jpg)
 
 
 ```
@@ -709,7 +709,7 @@ image(f,0,0)
 run()
 ```
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex20.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex20.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex20.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex20.jpg)
 
 
 ```
@@ -722,7 +722,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex21.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex21.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex21.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex21.jpg)
 
 Now the second way to manipulate an image is to work directly with its pixels by using the functions "get()" and "set()". The "get()" function needs two arguments that indicate a coordinate and returns the pixel of the image at that location, while "set()" needs a color and a coordinate and sets the pixel at that coordinate with the indicated color. Remember that both functions work with the ARGB value of a color, so "get()" will return an ARGB value and "set()" requires an ARGB value. You can use the "color()" function to convert your 3 or 4-value colors to ARGB, like:
 
@@ -782,7 +782,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex22.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex22.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex22.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex22.jpg)
 
 Don't try to run this example with large images because this is a very slow way to do what we're doing - later on we'll find more performance-friendly ways of manipulating an image's pixels.
 
@@ -819,7 +819,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex23.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex23.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex23.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex23.jpg)
 
 And now a continuous example:
 
@@ -839,7 +839,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex24.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex24.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex24.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex24.jpg)
 
 Here we're first setting factor as 1, and at each redraw it'll be divided by 2. That makes our rect to be drawn at half its position, width and height during each draw call. Since we don't have a background() call inside our draw section, we can see the rects that have been drawed in previous frames.
 
@@ -856,7 +856,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex25.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex25.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex25.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex25.jpg)
 
 Just like scale(), the transform function is cumulative, meaning that two transform(10,20) calls will have our (0,0) coordinate placed at our old (20,40) location.
 
@@ -873,7 +873,7 @@ def draw():
 run()
 ```
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex26.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex26.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex26.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex26.jpg)
 
 We're just calling translate(20,10) followed by ellipse(0,0,10,10) 9 times. This is equivalent to calling ellipse(20,10,10,10), then ellipse(40,20,10,10), then ellipse(60,30,10,10) and so on. Quite simple, right?
 
@@ -890,7 +890,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex27.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex27.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex27.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex27.jpg)
 
 With rotate(PI/4.0), we defined a rotation factor of 45 degrees. The coordinate (100,0) that indicates the upper left vertex of the rectangle was rotated by 45 degrees together with the rect itself.
 
@@ -908,7 +908,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex28.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex28.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex28.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex28.jpg)
 
 First we're setting our (0,0) coordinate to the middle of our screen with:
 ```
@@ -932,7 +932,7 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex29.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex29.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex29.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex29.jpg)
 
 This one is just like the previous example, but uses transparent fill and stroke colors for a cool effect.
 
@@ -966,6 +966,6 @@ run()
 ```
 
 
-![http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex30.jpg](http://pyprocessing.googlecode.com/svn/wiki/Tutorial.figs/ex30.jpg)
+![https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex30.jpg](https://cdn.rawgit.com/esperanc/pyprocessing/wiki/Tutorial.figs/ex30.jpg)
 
 Now this one is kind of more complex. Basically you draw a triangle with a different rotation each frame in order to make the spiral dark red saw. Then you draw yellow rectangles (again, each frame with a different rotation angle) in the middle in order to make the smaller saw. And finally a blue circle to make the purple degradé due to the alpha channel mix.
