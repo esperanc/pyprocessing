@@ -7,33 +7,33 @@ For instance, this simple example taken from a [Processing tutorial](http://www.
 <img src='http://www.processing.org/learning/drawing/imgs/1.11.jpg' />
 </td>
 <td>
-<pre><code>// <br>
-// Processing <br>
-//<br>
-size(200,200);<br>
-rectMode(CENTER);<br>
-rect(100,100,20,100);<br>
-ellipse(100,70,60,60);<br>
-ellipse(81,70,16,32); <br>
-ellipse(119,70,16,32); <br>
-line(90,150,80,160);<br>
-line(110,150,120,160);<br>
+<pre><code>// 
+// Processing 
+//
+size(200,200);
+rectMode(CENTER);
+rect(100,100,20,100);
+ellipse(100,70,60,60);
+ellipse(81,70,16,32); 
+ellipse(119,70,16,32); 
+line(90,150,80,160);
+line(110,150,120,160);
 </code></pre>
 </td>
 <td>
-<pre><code>#<br>
-# pyprocessing equivalent<br>
-#<br>
-from pyprocessing import *<br>
-size(200,200)<br>
-rectMode(CENTER)<br>
-rect(100,100,20,100)<br>
-ellipse(100,70,60,60)<br>
-ellipse(81,70,16,32) <br>
-ellipse(119,70,16,32) <br>
-line(90,150,80,160)<br>
-line(110,150,120,160)<br>
-run()<br>
+<pre><code>#
+# pyprocessing equivalent
+#
+from pyprocessing import *
+size(200,200)
+rectMode(CENTER)
+rect(100,100,20,100)
+ellipse(100,70,60,60)
+ellipse(81,70,16,32) 
+ellipse(119,70,16,32) 
+line(90,150,80,160)
+line(110,150,120,160)
+run()
 </code></pre>
 </td>
 </tr>
