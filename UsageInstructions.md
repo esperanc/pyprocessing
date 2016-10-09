@@ -37,7 +37,7 @@ In case you're wondering, here's the complete script and the contents of the dra
 <tr>
 <td>
 
-<img src='http://pyprocessing.googlecode.com/svn/wiki/UsageInstructions.figs/basicusage.png' />
+<img src='https://cdn.rawgit.com/esperanc/pyprocessing/wiki/UsageInstructions.figs/basicusage.png' />
 
 </td>
 <td>
@@ -95,11 +95,11 @@ In the example below, which implements an animation with two balls, `setup()` is
 <tr>
 <td>
 
-<img src='http://pyprocessing.googlecode.com/svn/wiki/UsageInstructions.figs/animation001.png' />
+<img src='https://cdn.rawgit.com/esperanc/pyprocessing/wiki/UsageInstructions.figs/animation001.png' />
 
-<img src='http://pyprocessing.googlecode.com/svn/wiki/UsageInstructions.figs/animation004.png' />
+<img src='https://cdn.rawgit.com/esperanc/pyprocessing/wiki/UsageInstructions.figs/animation004.png' />
 
-<img src='http://pyprocessing.googlecode.com/svn/wiki/UsageInstructions.figs/animation007.png' />
+<img src='https://cdn.rawgit.com/esperanc/pyprocessing/wiki/UsageInstructions.figs/animation007.png' />
 
 </td>
 <td>
@@ -140,7 +140,7 @@ The example program shown below illustrates a simple scribbling application wher
 <table>
 <tr>
 <td>
-<img src='http://pyprocessing.googlecode.com/svn/wiki/UsageInstructions.figs/interactioncallback001.png' />
+<img src='https://cdn.rawgit.com/esperanc/pyprocessing/wiki/UsageInstructions.figs/interactioncallback001.png' />
 </td>
 <td>
 <pre><code>from pyprocessing import *<br>
