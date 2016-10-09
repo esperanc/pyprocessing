@@ -37,14 +37,10 @@ instance, you might have to type:
 
       sudo python setup.py install
 
-Alternatively, if you are running some flavor of MS-Windows, there is a binary 
-installation file which you will find in the pyprocessing site 
-(http://code.google.com/p/pyprocessing/downloads).
-
 HOW TO USE IT?
 
 There are several example programs in the examples folder that you may try. 
 You may also take a look at the project wiki for simple usage instructions
-(http://code.google.com/p/pyprocessing/wiki/UsageInstructions)
+
 
 
