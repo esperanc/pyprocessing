@@ -25,15 +25,7 @@ pyglet's sample programs, you are in good shape to run pyprocessing.
 
 # HOW TO INSTALL IT? #
 
-Since version 1.2.1, pyprocessing is stored at pypi. Thus, the simplest way
-to get going is to use 'easy\_install':
-
-```
-easy_install -U pyglet
-easy_install -U pyprocessing
-```
-
-If you downloaded a source distribution, you need to put
+Download the source distribution and put
 the pyprocessing directory (the one which contains `__init__.py`, `attribs.py`,
 etc) in any place Python expects to find modules and packages. The simplest
 way of achieving this is to run the provided setup.py program:
@@ -50,12 +42,7 @@ instance, you might have to type:
 sudo python setup.py install
 ```
 
-Alternatively, if you are running some flavor of MS-Windows, there is a binary
-installation file which you will find in the pyprocessing site
-(http://code.google.com/p/pyprocessing/downloads).
-
 # HOW TO USE IT? #
 
 There are several example programs in the examples folder that you may try.
-You may also take a look at the project wiki for simple usage instructions
-(http://code.google.com/p/pyprocessing/wiki/UsageInstructions)
+You may also take a look at the project wiki for simple usage instructions.
