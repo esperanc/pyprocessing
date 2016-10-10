@@ -40,7 +40,7 @@ instance, you might have to type:
 HOW TO USE IT?
 
 There are several example programs in the examples folder that you may try. 
-You may also take a look at the project wiki for simple usage instructions
+You may also take a look at the [project wiki](../../wiki)
 
 
 
